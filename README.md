@@ -1,5 +1,7 @@
 # Scratch Cat FX 🐈
 
+<img src="assets/icon.svg" width="96" align="right" alt="icon">
+
 Scratch effect plugin (VST3).
 
 ## Status

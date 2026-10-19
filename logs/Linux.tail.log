@@ -145,6 +145,27 @@
 /home/runner/work/scratchcatfx-vst/scratchcatfx-vst/src/fx/../core/ScfxDeck.h:85:48: warning: conversion to ‘std::array<double, 8>::size_type’ {aka ‘long unsigned int’} from ‘int’ may change the sign of the result [-Wsign-conversion]
    85 |     double hotCuePos(int i) const { return hot[i]; }
       |                                                ^
+/home/runner/work/scratchcatfx-vst/scratchcatfx-vst/src/fx/../core/ScfxDeck.h: In member function ‘void scfx::Deck::process(float*, float*, int, const float*, const float*)’:
+/home/runner/work/scratchcatfx-vst/scratchcatfx-vst/src/fx/../core/ScfxDeck.h:157:21: warning: comparing floating-point with ‘==’ or ‘!=’ is unsafe [-Wfloat-equal]
+  157 |             if (vel != 0.0 || jogTouch) {
+      |                 ~~~~^~~~~~
+/home/runner/work/scratchcatfx-vst/scratchcatfx-vst/src/fx/../core/ScfxEngine.h: In member function ‘void scfx::Engine::process(const scfx::FxParams&, int, const float*, const float*, float*, float*)’:
+/home/runner/work/scratchcatfx-vst/scratchcatfx-vst/src/fx/../core/ScfxEngine.h:45:42: warning: conversion to ‘std::vector<float, std::allocator<float> >::size_type’ {aka ‘long unsigned int’} from ‘int’ may change the sign of the result [-Wsign-conversion]
+   45 |             outL[i] = strip.tick(0, tmpL[i] * trimS); outR[i] = strip.tick(1, tmpR[i] * trimS);
+      |                                          ^
+/home/runner/work/scratchcatfx-vst/scratchcatfx-vst/src/fx/../core/ScfxEngine.h:45:84: warning: conversion to ‘std::vector<float, std::allocator<float> >::size_type’ {aka ‘long unsigned int’} from ‘int’ may change the sign of the result [-Wsign-conversion]
+   45 |             outL[i] = strip.tick(0, tmpL[i] * trimS); outR[i] = strip.tick(1, tmpR[i] * trimS);
+      |                                                                                    ^
+In file included from /home/runner/work/scratchcatfx-vst/scratchcatfx-vst/build/_deps/juce-src/modules/juce_audio_processors_headless/juce_audio_processors_headless.h:145,
+                 from /home/runner/work/scratchcatfx-vst/scratchcatfx-vst/build/_deps/juce-src/modules/juce_audio_processors/juce_audio_processors.h:64,
+                 from /home/runner/work/scratchcatfx-vst/scratchcatfx-vst/src/fx/ScratchFx.h:4:
+/home/runner/work/scratchcatfx-vst/scratchcatfx-vst/build/_deps/juce-src/modules/juce_audio_processors_headless/processors/juce_AudioProcessor.h: At global scope:
+/home/runner/work/scratchcatfx-vst/scratchcatfx-vst/build/_deps/juce-src/modules/juce_audio_processors_headless/processors/juce_AudioProcessor.h:292:18: warning: ‘virtual void juce::AudioProcessor::processBlock(juce::AudioBuffer<double>&, juce::MidiBuffer&)’ was hidden [-Woverloaded-virtual=]
+  292 |     virtual void processBlock (AudioBuffer<double>& buffer,
+      |                  ^~~~~~~~~~~~
+/home/runner/work/scratchcatfx-vst/scratchcatfx-vst/src/fx/ScratchFx.h:18:10: note:   by ‘virtual void ScratchFxProcessor::processBlock(juce::AudioBuffer<float>&, juce::MidiBuffer&)’
+   18 |     void processBlock(juce::AudioBuffer<float>&, juce::MidiBuffer&) override;
+      |          ^~~~~~~~~~~~
 In file included from /home/runner/work/scratchcatfx-vst/scratchcatfx-vst/src/fx/../core/ScfxAnalysis.h:3,
                  from /home/runner/work/scratchcatfx-vst/scratchcatfx-vst/src/fx/../core/ScfxDeck.h:4,
                  from /home/runner/work/scratchcatfx-vst/scratchcatfx-vst/src/fx/../core/ScfxEngine.h:4,
@@ -167,10 +188,6 @@ In file included from /home/runner/work/scratchcatfx-vst/scratchcatfx-vst/src/fx
 /home/runner/work/scratchcatfx-vst/scratchcatfx-vst/src/fx/../core/ScfxDsp.h:110:21: warning: comparing floating-point with ‘==’ or ‘!=’ is unsafe [-Wfloat-equal]
   110 |         if (colMode != 0) { cf[ch].tick(x); x = colMode < 0 ? cf[ch].lp : cf[ch].hp; }
       |             ~~~~~~~~^~~~
-/home/runner/work/scratchcatfx-vst/scratchcatfx-vst/src/fx/../core/ScfxDeck.h: In member function ‘void scfx::Deck::process(float*, float*, int, const float*, const float*)’:
-/home/runner/work/scratchcatfx-vst/scratchcatfx-vst/src/fx/../core/ScfxDeck.h:157:21: warning: comparing floating-point with ‘==’ or ‘!=’ is unsafe [-Wfloat-equal]
-  157 |             if (vel != 0.0 || jogTouch) {
-      |                 ~~~~^~~~~~
 /home/runner/work/scratchcatfx-vst/scratchcatfx-vst/src/fx/../core/ScfxDsp.h: In member function ‘void scfx::FxSlot::process(float*, float*, int)’:
 /home/runner/work/scratchcatfx-vst/scratchcatfx-vst/src/fx/../core/ScfxDsp.h:176:39: warning: comparing floating-point with ‘==’ or ‘!=’ is unsafe [-Wfloat-equal]
   176 |             if (w < 0.0005f && target == 0.f) { if (type == FxEcho) { ed[0].push(ch[0][i]); ed[1].push(ch[1][i]); } continue; }
@@ -222,13 +239,6 @@ In file included from /home/runner/work/scratchcatfx-vst/scratchcatfx-vst/src/fx
 /home/runner/work/scratchcatfx-vst/scratchcatfx-vst/src/fx/../core/ScfxAnalysis.h:33:63: warning: conversion to ‘std::vector<float, std::allocator<float> >::size_type’ {aka ‘long unsigned int’} from ‘int’ may change the sign of the result [-Wsign-conversion]
    33 |         for (int i = 0; i < win; ++i) buf[i] = { x[p + i] * w[i], 0.f };
       |                                                               ^
-/home/runner/work/scratchcatfx-vst/scratchcatfx-vst/src/fx/../core/ScfxEngine.h: In member function ‘void scfx::Engine::process(const scfx::FxParams&, int, const float*, const float*, float*, float*)’:
-/home/runner/work/scratchcatfx-vst/scratchcatfx-vst/src/fx/../core/ScfxEngine.h:45:42: warning: conversion to ‘std::vector<float, std::allocator<float> >::size_type’ {aka ‘long unsigned int’} from ‘int’ may change the sign of the result [-Wsign-conversion]
-   45 |             outL[i] = strip.tick(0, tmpL[i] * trimS); outR[i] = strip.tick(1, tmpR[i] * trimS);
-      |                                          ^
-/home/runner/work/scratchcatfx-vst/scratchcatfx-vst/src/fx/../core/ScfxEngine.h:45:84: warning: conversion to ‘std::vector<float, std::allocator<float> >::size_type’ {aka ‘long unsigned int’} from ‘int’ may change the sign of the result [-Wsign-conversion]
-   45 |             outL[i] = strip.tick(0, tmpL[i] * trimS); outR[i] = strip.tick(1, tmpR[i] * trimS);
-      |                                                                                    ^
 /home/runner/work/scratchcatfx-vst/scratchcatfx-vst/src/fx/../core/ScfxAnalysis.h:38:61: warning: conversion to ‘std::vector<std::complex<float> >::size_type’ {aka ‘long unsigned int’} from ‘int’ may change the sign of the result [-Wsign-conversion]
    38 |             const float m = std::log1p(100.f * std::abs(buf[k]) / (float) win * 4.f);
       |                                                             ^
@@ -242,16 +252,6 @@ In file included from /home/runner/work/scratchcatfx-vst/scratchcatfx-vst/src/fx
 /home/runner/work/scratchcatfx-vst/scratchcatfx-vst/src/fx/../core/ScfxAnalysis.h:49:114: warning: conversion to ‘std::vector<float, std::allocator<float> >::size_type’ {aka ‘long unsigned int’} from ‘long int’ may change the sign of the result [-Wsign-conversion]
    49 |             for (int k = -ml; k <= ml; ++k) { long j = (long) i + k; if (j >= 0 && j < (long) e.size()) { s += e[j]; ++c; } }
       |                                                                                                                  ^
-In file included from /home/runner/work/scratchcatfx-vst/scratchcatfx-vst/build/_deps/juce-src/modules/juce_audio_processors_headless/juce_audio_processors_headless.h:145,
-                 from /home/runner/work/scratchcatfx-vst/scratchcatfx-vst/build/_deps/juce-src/modules/juce_audio_processors/juce_audio_processors.h:64,
-                 from /home/runner/work/scratchcatfx-vst/scratchcatfx-vst/src/fx/ScratchFx.h:4:
-/home/runner/work/scratchcatfx-vst/scratchcatfx-vst/build/_deps/juce-src/modules/juce_audio_processors_headless/processors/juce_AudioProcessor.h: At global scope:
-/home/runner/work/scratchcatfx-vst/scratchcatfx-vst/build/_deps/juce-src/modules/juce_audio_processors_headless/processors/juce_AudioProcessor.h:292:18: warning: ‘virtual void juce::AudioProcessor::processBlock(juce::AudioBuffer<double>&, juce::MidiBuffer&)’ was hidden [-Woverloaded-virtual=]
-  292 |     virtual void processBlock (AudioBuffer<double>& buffer,
-      |                  ^~~~~~~~~~~~
-/home/runner/work/scratchcatfx-vst/scratchcatfx-vst/src/fx/ScratchFx.h:18:10: note:   by ‘virtual void ScratchFxProcessor::processBlock(juce::AudioBuffer<float>&, juce::MidiBuffer&)’
-   18 |     void processBlock(juce::AudioBuffer<float>&, juce::MidiBuffer&) override;
-      |          ^~~~~~~~~~~~
 /home/runner/work/scratchcatfx-vst/scratchcatfx-vst/src/fx/../core/ScfxAnalysis.h: In function ‘scfx::BpmResult scfx::analyseBpm(const float*, const float*, size_t, double)’:
 /home/runner/work/scratchcatfx-vst/scratchcatfx-vst/src/fx/../core/ScfxAnalysis.h:78:34: warning: conversion to ‘std::vector<double>::size_type’ {aka ‘long unsigned int’} from ‘int’ may change the sign of the result [-Wsign-conversion]
    78 |     std::vector<double> ac(lagHi + 2, 0.0);
@@ -377,21 +377,21 @@ In file included from /home/runner/work/scratchcatfx-vst/scratchcatfx-vst/build/
 [ 59%] Linking CXX static library "ScratchCatFx_artefacts/Release/libScratch Cat FX_SharedCode.a"
 [ 59%] Built target ScratchCatFx
 [ 61%] Building CXX object CMakeFiles/ScratchCatFx_Standalone.dir/_deps/juce-src/modules/juce_audio_plugin_client/juce_audio_plugin_client_AAX.cpp.o
-[ 63%] Building CXX object CMakeFiles/ScratchCatFx_Standalone.dir/_deps/juce-src/modules/juce_audio_plugin_client/juce_audio_plugin_client_AAX_utils.cpp.o
-[ 65%] Building CXX object CMakeFiles/ScratchCatFx_Standalone.dir/_deps/juce-src/modules/juce_audio_plugin_client/juce_audio_plugin_client_ARA.cpp.o
-[ 68%] Building CXX object CMakeFiles/ScratchCatFx_VST3.dir/_deps/juce-src/modules/juce_audio_plugin_client/juce_audio_plugin_client_AAX.cpp.o
-[ 70%] Building CXX object CMakeFiles/ScratchCatFx_Standalone.dir/_deps/juce-src/modules/juce_audio_plugin_client/juce_audio_plugin_client_LV2.cpp.o
-[ 72%] Building CXX object CMakeFiles/ScratchCatFx_Standalone.dir/_deps/juce-src/modules/juce_audio_plugin_client/juce_audio_plugin_client_Standalone.cpp.o
-[ 75%] Building CXX object CMakeFiles/ScratchCatFx_VST3.dir/_deps/juce-src/modules/juce_audio_plugin_client/juce_audio_plugin_client_AAX_utils.cpp.o
+[ 65%] Building CXX object CMakeFiles/ScratchCatFx_Standalone.dir/_deps/juce-src/modules/juce_audio_plugin_client/juce_audio_plugin_client_AAX_utils.cpp.o
+[ 65%] Building CXX object CMakeFiles/ScratchCatFx_VST3.dir/_deps/juce-src/modules/juce_audio_plugin_client/juce_audio_plugin_client_AAX.cpp.o
+[ 68%] Building CXX object CMakeFiles/ScratchCatFx_VST3.dir/_deps/juce-src/modules/juce_audio_plugin_client/juce_audio_plugin_client_AAX_utils.cpp.o
+[ 70%] Building CXX object CMakeFiles/ScratchCatFx_Standalone.dir/_deps/juce-src/modules/juce_audio_plugin_client/juce_audio_plugin_client_ARA.cpp.o
+[ 72%] Building CXX object CMakeFiles/ScratchCatFx_VST3.dir/_deps/juce-src/modules/juce_audio_plugin_client/juce_audio_plugin_client_LV2.cpp.o
+[ 75%] Building CXX object CMakeFiles/ScratchCatFx_Standalone.dir/_deps/juce-src/modules/juce_audio_plugin_client/juce_audio_plugin_client_LV2.cpp.o
 [ 77%] Building CXX object CMakeFiles/ScratchCatFx_VST3.dir/_deps/juce-src/modules/juce_audio_plugin_client/juce_audio_plugin_client_ARA.cpp.o
-[ 79%] Building CXX object CMakeFiles/ScratchCatFx_VST3.dir/_deps/juce-src/modules/juce_audio_plugin_client/juce_audio_plugin_client_LV2.cpp.o
-[ 81%] Building CXX object CMakeFiles/ScratchCatFx_VST3.dir/_deps/juce-src/modules/juce_audio_plugin_client/juce_audio_plugin_client_Standalone.cpp.o
-[ 84%] Building CXX object CMakeFiles/ScratchCatFx_Standalone.dir/_deps/juce-src/modules/juce_audio_plugin_client/juce_audio_plugin_client_Unity.cpp.o
-[ 86%] Building CXX object CMakeFiles/ScratchCatFx_VST3.dir/_deps/juce-src/modules/juce_audio_plugin_client/juce_audio_plugin_client_Unity.cpp.o
+[ 79%] Building CXX object CMakeFiles/ScratchCatFx_VST3.dir/_deps/juce-src/modules/juce_audio_plugin_client/juce_audio_plugin_client_Standalone.cpp.o
+[ 81%] Building CXX object CMakeFiles/ScratchCatFx_VST3.dir/_deps/juce-src/modules/juce_audio_plugin_client/juce_audio_plugin_client_Unity.cpp.o
+[ 84%] Building CXX object CMakeFiles/ScratchCatFx_Standalone.dir/_deps/juce-src/modules/juce_audio_plugin_client/juce_audio_plugin_client_Standalone.cpp.o
+[ 86%] Building CXX object CMakeFiles/ScratchCatFx_Standalone.dir/_deps/juce-src/modules/juce_audio_plugin_client/juce_audio_plugin_client_Unity.cpp.o
 [ 88%] Building CXX object CMakeFiles/ScratchCatFx_VST3.dir/_deps/juce-src/modules/juce_audio_plugin_client/juce_audio_plugin_client_VST2.cpp.o
-[ 90%] Building CXX object CMakeFiles/ScratchCatFx_Standalone.dir/_deps/juce-src/modules/juce_audio_plugin_client/juce_audio_plugin_client_VST2.cpp.o
-[ 93%] Building CXX object CMakeFiles/ScratchCatFx_Standalone.dir/_deps/juce-src/modules/juce_audio_plugin_client/juce_audio_plugin_client_VST3.cpp.o
-[ 95%] Building CXX object CMakeFiles/ScratchCatFx_VST3.dir/_deps/juce-src/modules/juce_audio_plugin_client/juce_audio_plugin_client_VST3.cpp.o
+[ 90%] Building CXX object CMakeFiles/ScratchCatFx_VST3.dir/_deps/juce-src/modules/juce_audio_plugin_client/juce_audio_plugin_client_VST3.cpp.o
+[ 93%] Building CXX object CMakeFiles/ScratchCatFx_Standalone.dir/_deps/juce-src/modules/juce_audio_plugin_client/juce_audio_plugin_client_VST2.cpp.o
+[ 95%] Building CXX object CMakeFiles/ScratchCatFx_Standalone.dir/_deps/juce-src/modules/juce_audio_plugin_client/juce_audio_plugin_client_VST3.cpp.o
 [ 97%] Linking CXX executable "ScratchCatFx_artefacts/Release/Standalone/Scratch Cat FX"
 [ 97%] Built target ScratchCatFx_Standalone
 [100%] Linking CXX shared module "ScratchCatFx_artefacts/Release/VST3/Scratch Cat FX.vst3/Contents/x86_64-linux/Scratch Cat FX.so"

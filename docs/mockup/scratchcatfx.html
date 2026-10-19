@@ -793,8 +793,9 @@ function buildDeck(host, E, i, col, letter, o) {
   var q = function (s) { return $(s, root); };
   var plat = mkPlatter(q(".plat"), d, col, letter);
   /* tempo fader + range */
-  var fd = q(".dk-fd"); var rg = document.createElement("div"); rg.className = "row2 col"; fd.appendChild(rg);
-  mkFader(fd, { id: "tp" + i, label: "Tempo", min: -16, max: 16, def: 0, snap: 0.25, fmt: function (v) { return (v > 0 ? "+" : "") + v.toFixed(1) + "%"; }, tip: "Speed of this deck. Up is faster." });
+  var fd = q(".dk-fd"); var rg = document.createElement("div"); rg.className = "row2 col"; rg.style.cssText = "justify-content:flex-end"; def("rg" + i, 16);
+  mkFader(fd, { id: "tp" + i, label: "Tempo", min: -1, max: 1, def: 0, snap: 0.02, fmt: function (v) { var t = v * S["rg" + i]; return (t > 0 ? "+" : "") + t.toFixed(1) + "%"; }, tip: "Speed of this deck. Up is faster. The range menu sets how far it goes." });
+  fd.appendChild(rg); mkSel(rg, "rg" + i, "Range", [[8, "8%"], [16, "16%"], [50, "50%"]], "How far the tempo fader goes.", 16); addUI("rg" + i, function () { if (UI["tp" + i]) UI["tp" + i](S["tp" + i]); });
   /* loops */
   var lp = q(".dloops"), LB = [["1/2", 0.5], ["1", 1], ["2", 2], ["4", 4], ["8", 8]], lbs = [];
   LB.forEach(function (l) { var b = document.createElement("button"); b.textContent = l[0]; b.setAttribute("data-tip", "Loop of " + l[0] + " beat" + (l[1] > 1 ? "s" : "") + " from here. Press again to leave the loop."); lp.appendChild(b); lbs.push(b); b.addEventListener("click", function () { if (d.n < 100) return; if (d.loopOn && d._lb === l[1]) { d.loopOn = false; } else { d._lb = l[1]; d.setLoop(l[1]); } }); });
@@ -835,11 +836,13 @@ function hotPads(host, E, i, mode) {
     if (m === "hot") { b.innerHTML = "<i>" + (k + 1) + "</i>"; b.setAttribute("data-tip", "Hot cue " + (k + 1) + ": press to set a marker here, press again to jump to it. Shift-click or right-click clears it."); b.addEventListener("click", function (e) { if (d.n < 100) return; if (e.shiftKey) { d.hot[k] = null; return; } if (d.hot[k] === null) d.hot[k] = S["qu" + i] ? d.nearestBeat(d.pos) : d.pos; else { d.pos = d.hot[k]; d.ghost = d.pos; ensureCtx(); E.start(); if (!d.playing) d.playing = true; } }); b.addEventListener("contextmenu", function (e) { e.preventDefault(); d.hot[k] = null; }); }
     else if (m === "loop") { b.textContent = LOOPS[k] < 1 ? "1/" + (1 / LOOPS[k]) : String(LOOPS[k]); b.setAttribute("data-tip", "Loop of " + LOOPS[k] + " beats from here."); b.addEventListener("click", function () { if (d.n < 100) return; if (d.loopOn && d._lb === LOOPS[k]) d.loopOn = false; else { d._lb = LOOPS[k]; d.setLoop(LOOPS[k]); } }); }
     else if (m === "jump") { b.textContent = (JUMPS[k] > 0 ? "+" : "") + JUMPS[k]; b.setAttribute("data-tip", "Jump " + JUMPS[k] + " beats."); b.addEventListener("click", function () { if (d.n < 100) return; d.pos = clamp(d.pos + JUMPS[k] * d.beatLen(), 0, d.n - 2); d.ghost = d.pos; }); }
-    else if (m === "sampler") { b.textContent = SHOTS[k][0]; b.setAttribute("data-tip", "Sampler pad: plays a short sound over the mix."); b.addEventListener("pointerdown", function () { ensureCtx(); E.start(); E.shots.push({ a: SHOTS[k][1](), i: 0 }); b.classList.add("hit"); setTimeout(function () { b.classList.remove("hit"); }, 120); }); }
+    else if (m === "samp") { b.textContent = SHOTS[k][0]; b.setAttribute("data-tip", "Sampler pad: plays a short sound over the mix."); b.addEventListener("pointerdown", function () { ensureCtx(); E.start(); E.shots.push({ a: SHOTS[k][1](), i: 0 }); b.classList.add("hit"); setTimeout(function () { b.classList.remove("hit"); }, 120); }); }
     else { b.textContent = FXP[k]; b.setAttribute("data-tip", "Pad FX: hold to apply " + FXP[k] + " to this deck."); var dn = false, restore = null; b.addEventListener("pointerdown", function (e) { dn = true; b.setPointerCapture(e.pointerId); b.classList.add("hit"); var sl = E.P.slots, f = ["filter", "echo", "reverb", "flanger", "crush"][k]; if (f) { restore = sl[2].on + "|" + sl[2].type + "|" + sl[2].p + "|" + sl[2].wet; sl[2].type = f; sl[2].on = true; sl[2].wet = 0.8; sl[2].p = f === "filter" ? 0.18 : 0.6; E.fx[2] = new FxUnit(f); } else if (k === 5) { d.mode = "brake"; d.brakeT = 0.5; } else if (k === 6) { d.slip = true; d.ghost = d.pos; d.loop = { a: d.pos, b: d.pos + d.beatLen() / 4 }; d.loopOn = true; } else { d.cue = d.pos; d.stutter = true; } b._r = restore; }); var up = function () { if (!dn) return; dn = false; b.classList.remove("hit"); if (b._r) { var r = b._r.split("|"), sl = E.P.slots; sl[2].on = r[0] === "true"; sl[2].type = r[1]; sl[2].p = +r[2]; sl[2].wet = +r[3]; E.fx[2] = new FxUnit(sl[2].type); b._r = null; } if (k === 6) { d.loopOn = false; d.pos = d.ghost; d.slip = false; } if (k === 7) d.stutter = false; }; b.addEventListener("pointerup", up); b.addEventListener("pointercancel", up); }
   })(k);
   return bs;
 }
+
+function tempoPct(i) { return S["tp" + i] * S["rg" + i]; }
 
 /* css shared by the deck mockups, injected at load */
 (function () { var s = document.createElement("style"); s.textContent = [
@@ -862,7 +865,7 @@ function hotPads(host, E, i, mode) {
 ".mxk{display:flex;gap:2px;justify-content:space-between}.mxk .kw{width:62px}",
 ".mxm{display:grid;grid-template-columns:auto 38px minmax(0,1fr);gap:8px;height:136px}.mxm .fdr{min-height:50px}.mxm .fdw{height:100%}.mxf{display:flex;gap:6px}.vuc{position:relative;background:#06080a;border:1px solid var(--line);border-radius:3px}.vuc canvas{position:absolute;inset:0;width:100%;height:100%}",
 ".fxs{display:grid;grid-template-columns:auto minmax(0,1fr) auto auto;gap:6px;align-items:center;border-top:1px solid var(--line);padding-top:4px}.fxs .kw{width:56px}.fxs select{max-width:100%}",
-".fxs .kw{display:grid;grid-template-columns:auto auto;grid-template-areas:'k l' 'k v';align-items:center;justify-items:start;column-gap:6px;width:auto}.fxs .kw .knob{grid-area:k;transform:scale(.7);margin:-8px -6px}.fxs .kw .kl{grid-area:l;text-align:left}.fxs .kw .kv{grid-area:v;white-space:nowrap}",
+".fxs .kw,.cmp .kw{display:grid;grid-template-columns:auto auto;grid-template-areas:'k l' 'k v';align-items:center;justify-items:start;column-gap:6px;width:auto}.fxs .kw .knob,.cmp .kw .knob{grid-area:k;transform:scale(.7);margin:-8px -6px}.cmp .kw .kl,.fxs .kw .kl{grid-area:l;text-align:left}.cmp .kw .kv,.fxs .kw .kv{grid-area:v;white-space:nowrap}",
 ".mxx{display:flex;flex-direction:column;gap:6px}",
 ".col{flex-direction:column}"
 ].join("\n"); document.head.appendChild(s); })();
@@ -912,7 +915,7 @@ function applyAll() {
   c.trim = S.t0; c.lo = S.lo0; c.mi = S.mi0; c.hi = S.hi0; c.kl = S.kl0; c.km = S.km0; c.kh = S.kh0; c.color = S.co0; c.fader = S.fd0;
   P.bpm = S.hostBpm;
   for (var q = 0; q < 3; q++) { var s = P.slots[q]; if (s.type !== S["f" + q + "t"]) { s.type = S["f" + q + "t"]; E.fx[q] = new FxUnit(s.type); } s.on = !!S["f" + q + "o"]; s.p = S["f" + q + "p"]; s.wet = S["f" + q + "w"]; }
-  var range = 16, tp = S.tp0; if (S.sy0 && DK.bpm) { tp = clamp((S.hostBpm / DK.bpm - 1) * 100, -range, range); if (Math.abs(tp - S.tp0) > 1e-6) { S.tp0 = tp; if (UI.tp0) UI.tp0(tp); } }
+  var range = S.rg0, tp = tempoPct(0); if (S.sy0 && DK.bpm) { tp = clamp((S.hostBpm / DK.bpm - 1) * 100, -range, range); var nv = tp / range; if (Math.abs(nv - S.tp0) > 1e-6) { S.tp0 = nv; if (UI.tp0) UI.tp0(nv); } }
   DK.tempo = 1 + tp / 100; DK.keylock = !!S.kk0; if (DRY.bpm) DRY.tempo = S.hostBpm / DRY.bpm; DK.vinyl = !!S.vinyl;
   $$("#zoomRow [data-z]").forEach(function (b) { b.setAttribute("aria-pressed", String(+b.getAttribute("data-z") === S.zoom)); });
 }
@@ -950,17 +953,17 @@ PAINT.push(function (dt) {
   var tt = DK.n > 100 ? DK.pos / sr : 0; $(".dmeta", deckUI.root).textContent = "BPM " + (DK.bpm * DK.tempo).toFixed(1) + "  ·  Key " + DK.key + "  ·  " + fmtT(tt);
 });
 /* ---------- presets ---------- */
-var KEYS = ["src", "vinyl", "mst", "xf", "xc", "fxt", "t0", "lo0", "mi0", "hi0", "co0", "fd0", "kl0", "km0", "kh0", "tp0", "kk0", "sy0"]; for (var q = 0; q < 3; q++) KEYS.push("f" + q + "o", "f" + q + "t", "f" + q + "p", "f" + q + "w");
+var KEYS = ["src", "vinyl", "mst", "xf", "xc", "fxt", "t0", "lo0", "mi0", "hi0", "co0", "fd0", "kl0", "km0", "kh0", "tp0", "rg0", "kk0", "sy0"]; for (var q = 0; q < 3; q++) KEYS.push("f" + q + "o", "f" + q + "t", "f" + q + "p", "f" + q + "w");
 function fx3(a) { var o = {}; for (var q = 0; q < 3; q++) { o["f" + q + "o"] = a[q][0]; o["f" + q + "t"] = a[q][1]; o["f" + q + "p"] = a[q][2]; o["f" + q + "w"] = a[q][3]; } return o; }
 function mix(v, base) { var o = {}; for (var k in base) o[k] = base[k]; for (k in v) o[k] = v[k]; return o; }
-var BASE = mix(fx3([[true, "filter", 0.25, 1], [false, "echo", 0.5, 0.4], [false, "reverb", 0.5, 0.3]]), { vinyl: true, mst: 0, xf: 0, xc: "smooth", fxt: "A", t0: 0, lo0: 0, mi0: 0, hi0: 0, co0: 0, fd0: 1, kl0: false, km0: false, kh0: false, tp0: 0, kk0: false, sy0: false });
+var BASE = mix(fx3([[true, "filter", 0.25, 1], [false, "echo", 0.5, 0.4], [false, "reverb", 0.5, 0.3]]), { vinyl: true, mst: 0, xf: 0, xc: "smooth", fxt: "A", t0: 0, lo0: 0, mi0: 0, hi0: 0, co0: 0, fd0: 1, kl0: false, km0: false, kh0: false, tp0: 0, rg0: 16, kk0: false, sy0: false });
 var FACT = [
   { name: "Init", v: BASE },
   { name: "Wash Out", v: mix(fx3([[false, "filter", 0.25, 1], [true, "echo", 0.75, 0.5], [true, "reverb", 0.85, 0.7]]), BASE) },
   { name: "Battle scratch", v: mix({ xc: "sharp", vinyl: false, hi0: 3 }, BASE) },
   { name: "Radio squash", v: mix(fx3([[true, "filter", 0.72, 1], [false, "echo", 0.5, 0.4], [true, "crush", 0.35, 0.5]]), BASE) },
   { name: "Echo out", v: mix(fx3([[false, "filter", 0.25, 1], [true, "echo", 0.5, 0.55], [false, "reverb", 0.5, 0.3]]), BASE) },
-  { name: "Key lock jam", v: mix({ kk0: true, tp0: 4 }, BASE) }
+  { name: "Key lock jam", v: mix({ kk0: true, tp0: 0.25 }, BASE) }
 ];
 initPresets(FACT, KEYS, function () { applyAll(); });
 simpleCards("Scratch Cat FX", "<p>Scratch Cat FX captures your DAW's audio into a deck you can scratch, loop, brake and mix, with three effects. This page is a design mockup with a test signal.</p>",

@@ -79,8 +79,28 @@ static void testEqFx() {
       std::vector<float> L, R; run(e, p, 700, 1.0, L, R, [&](int b) { if (b == 30) e.touch(true, -1.5); });
       bool bad = false; for (float v : L) if (!std::isfinite(v) || std::fabs(v) > 1.01f) bad = true; CHECK(!bad, "all FX plus scratching stays finite and bounded"); }
 }
+static void testMixerRegression() {
+    // The mixer must actually shape the sound: each EQ band kill removes its own tone, colour sweeps never go non finite or silent.
+    struct T { double hz; int band; } tones[] = { { 80, 0 }, { 1000, 1 }, { 9000, 2 } };
+    for (auto& t : tones) {
+        Engine e; e.prepare(sr); FxParams p; std::vector<float> L, R, L0, R0; Engine e0; e0.prepare(sr); FxParams n;
+        (t.band == 0 ? p.eqLo : t.band == 1 ? p.eqMid : p.eqHi) = -26.f;
+        run(e, p, t.hz, 1.0, L, R, [](int) {}); run(e0, n, t.hz, 1.0, L0, R0, [](int) {});
+        CHECK(rms(L, 24000, 48000) < 0.35 * rms(L0, 24000, 48000), "band %d kill cuts %.0f Hz (%.3f vs %.3f)", t.band, t.hz, rms(L, 24000, 48000), rms(L0, 24000, 48000));
+    }
+    for (float col = -1.f; col <= 1.001f; col += 0.125f) {
+        Engine e; e.prepare(sr); FxParams p; p.colour = col; std::vector<float> L, R;
+        run(e, p, 700, 0.6, L, R, [&](int b) { if (b == 30) e.touch(true, 1.0); if (b == 60) e.touch(true, -1.0); });
+        bool bad = false; for (float v : L) if (!std::isfinite(v)) bad = true;
+        CHECK(!bad, "colour %.3f stays finite", col);
+        if (col > -0.8f && col < 0.3f) CHECK(rms(L, 12000, 20000) > 0.01, "colour %.3f does not mute a 700 Hz tone", col);
+    }
+    { Engine e; e.prepare(sr); FxParams p; p.purrOn = true; p.purrDrive = 0.9f; p.purrXs = 0.9f; p.purrFuzz = 0.9f; std::vector<float> L, R;
+      run(e, p, 220, 0.5, L, R, [](int) {}); bool bad = false; float m = 0; for (float v : L) { if (!std::isfinite(v)) bad = true; m = std::max(m, std::fabs(v)); }
+      CHECK(!bad && m <= 1.0f && rms(L, 12000, 24000) > 0.05, "PurrOne colour at the extreme stays finite, bounded and audible"); }
+}
 int main() {
-    testPassthrough(); testScratch(); testBrakeBackspin(); testEqFx();
+    testPassthrough(); testScratch(); testBrakeBackspin(); testEqFx(); testMixerRegression();
     if (fails) { std::printf("%d FAILED\n", fails); return 1; }
     std::printf("all tests passed\n"); return 0;
 }

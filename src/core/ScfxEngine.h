@@ -2,6 +2,7 @@
 // With nothing pressed the deck is in live mode and the sound passes straight through (zero latency, bit exact at neutral).
 #pragma once
 #include "ScfxDeck.h"
+#include "ScfxPurrColour.h"
 #include <atomic>
 
 namespace scfx {
@@ -11,6 +12,7 @@ struct FxParams {
     int fxType[3] = { FxFilter, FxEcho, FxReverb }; bool fxOn[3] = { false, false, false };
     float fxP1[3] = { 0.5f, 0.45f, 0.6f }, fxP2[3] = { 0.5f, 0.4f, 0.25f };
     float chainMix = 0.6f, echoBeats = 0.75f;
+    bool purrOn = false; float purrDrive = 0, purrXs = 0, purrFuzz = 0, purrMix = 1.f;   // PurrOne colour: Drive, Transistor, Fuzz
     double hostBpm = 120.0;
 };
 
@@ -41,12 +43,22 @@ public:
         for (int i = 0; i < n; ++i) {
             trimS += (dbToLin(p.trimDb) - trimS) * sm;
             outL[i] = strip.tick(0, tmpL[i] * trimS); outR[i] = strip.tick(1, tmpR[i] * trimS);
+            if (!std::isfinite(outL[i]) || !std::isfinite(outR[i])) { strip.prepare(fs); outL[i] = outR[i] = 0.f; }   // never let one bad sample silence the output for good
         }
         for (int k = 0; k < 3; ++k) {
             if (fx[k].type != p.fxType[k]) { fx[k].type = p.fxType[k]; fx[k].prepare(fs); }
             fx[k].on = p.fxOn[k]; fx[k].p1 = p.fxP1[k]; fx[k].p2 = p.fxP2[k] * p.chainMix;
             fx[k].bpm = (float) std::max(30.0, p.hostBpm); fx[k].echoBeats = p.echoBeats;
             fx[k].process(outL, outR, n);
+        }
+        if (p.purrOn && p.purrMix > 0.001f && (p.purrDrive > 0.001f || p.purrXs > 0.001f || p.purrFuzz > 0.001f)) {
+            const float mk = purr::makeup(p.purrDrive, p.purrXs, p.purrFuzz, 0.35f);
+            float* ch[2] = { outL, outR };
+            for (int c = 0; c < 2; ++c) for (int i = 0; i < n; ++i) {      // 2x oversampled (linear up, average down)
+                const float x = ch[c][i], m = 0.5f * (purrPrev[c] + x);
+                const float y = 0.5f * (purr::shaper(m, p.purrDrive, p.purrXs, p.purrFuzz) + purr::shaper(x, p.purrDrive, p.purrXs, p.purrFuzz)) * mk;
+                purrPrev[c] = x; ch[c][i] = x + (y - x) * p.purrMix;
+            }
         }
         for (int i = 0; i < n; ++i) {
             masterS += (dbToLin(p.masterDb) - masterS) * sm;
@@ -65,6 +77,6 @@ public:
 private:
     double fs = 44100;
     std::vector<float> tmpL, tmpR;
-    float trimS = 1.f, masterS = 1.f;
+    float trimS = 1.f, masterS = 1.f, purrPrev[2] = { 0.f, 0.f };
 };
 }

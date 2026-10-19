@@ -19,6 +19,7 @@ Layout ScratchFxProcessor::layout()
     f("lo", "Low", -26.f, 12.f, 0.f, "dB"); f("mid", "Mid", -26.f, 12.f, 0.f, "dB"); f("hi", "High", -26.f, 12.f, 0.f, "dB");
     f("colour", "Colour", -1.f, 1.f, 0.f);
     f("master", "Master", -24.f, 12.f, 0.f, "dB");
+    b("purron", "PurrOne colour on"); f("purrdrive", "PurrOne Drive", 0.f, 1.f, 0.f); f("purrxs", "PurrOne Transistor", 0.f, 1.f, 0.f); f("purrfuzz", "PurrOne Fuzz", 0.f, 1.f, 0.f); f("purrmix", "PurrOne mix", 0.f, 1.f, 1.f);
     const juce::StringArray names { "Off", "Filter", "Echo", "Reverb", "Flanger", "Crush" };
     for (int k = 0; k < 3; ++k)
     {
@@ -73,6 +74,7 @@ void ScratchFxProcessor::processBlock(juce::AudioBuffer<float>& buf, juce::MidiB
         p.fxType[k] = (int) get(("fx" + s + "t").toRawUTF8()); p.fxOn[k] = get(("fx" + s + "o").toRawUTF8()) > 0.5f;
         p.fxP1[k] = get(("fx" + s + "p1").toRawUTF8()); p.fxP2[k] = get(("fx" + s + "p2").toRawUTF8());
     }
+    p.purrOn = get("purron") > 0.5f; p.purrDrive = get("purrdrive"); p.purrXs = get("purrxs"); p.purrFuzz = get("purrfuzz"); p.purrMix = get("purrmix");
     p.chainMix = get("chain"); p.echoBeats = get("echo");
     if (auto* ph = getPlayHead()) if (auto pos = ph->getPosition()) if (auto bpm = pos->getBpm()) p.hostBpm = *bpm;
 

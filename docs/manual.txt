@@ -1,0 +1,30 @@
+# Intro
+Scratch Cat FX is a scratch effect plugin. It records the sound coming from your DAW and lets you scratch, brake and backspin it like a record, then adds EQ, colour, PurrOne style Drive, Transistor and Fuzz, and a 3 slot FX chain. When you do not touch it, the sound passes straight through unchanged.
+
+# Quick start
+- Put the plugin on a track or the master and play your project.
+- Turn on Hand on platter, then move Platter speed (or automate or MIDI-map it in your host) to scratch the last part of the sound. Turn Hand on platter off to let it play on at normal speed.
+- Brake slows the sound to a stop, Backspin spins it backward and stops, Go live returns to the live DAW sound.
+- Note: this version uses the host's plain parameter view as its window. The designed window (platter, hot cues, mixer) is shown in the mockup in the repository and is not built into the plugin yet.
+
+# Scratch controls
+- Hand on platter: while on, the platter follows Platter speed instead of playing normally.
+- Platter speed: -4 to +4 times normal speed. Negative plays backward.
+- Brake, Backspin, Go live: described above. Go live returns to the live sound.
+
+# Mixer and colour
+- Trim: input level, -12 to +12 dB.
+- Low, Mid, High: three band EQ, -26 to +12 dB. All the way down kills the band.
+- Colour: left is a low pass filter, right is a high pass filter, centre is off.
+- Master: output level, -24 to +12 dB.
+
+# PurrOne colour
+- PurrOne colour on switches the stage on. Drive is a symmetric analog style clip, Transistor is an asymmetric stage with even harmonics, Fuzz is a gritty octave-rich fuzz. PurrOne mix blends it with the clean sound.
+
+# FX chain
+- Three slots in series, each with a Type (Off, Filter, Echo, Reverb, Flanger, Crush), an On switch, an Amount and a Mix. FX chain mix scales all three. Echo beats sets the echo time in beats.
+
+# Recommendations
+- Start with the chain mix near 60 percent and add one effect at a time.
+- Use Brake and Backspin for build-up endings, and automate Hand on platter and Platter speed for scratches.
+- Nothing here has been tuned by ear yet: please report anything that sounds wrong on GitHub.

@@ -18,13 +18,13 @@ body { margin:0; background:var(--ground); color:var(--ink); font-family:var(--f
   padding-block:12px; padding-left:max(16px,env(safe-area-inset-left,0px)); padding-right:max(16px,env(safe-area-inset-right,0px)); }
 #desk { position:relative; width:100%; }
 #frame { position:absolute; touch-action:none; }
-#win { position:absolute; left:0; top:0; width:1200px; height:960px; transform-origin:0 0; }
+#win { position:absolute; left:0; top:0; width:1700px; height:900px; transform-origin:0 0; }
 .rz { position:absolute; z-index:50; touch-action:none; }
 .rz.n,.rz.s { left:18px; right:18px; height:10px; cursor:ns-resize; } .rz.n { top:-5px; } .rz.s { bottom:-5px; }
 .rz.e,.rz.w { top:18px; bottom:18px; width:10px; cursor:ew-resize; } .rz.e { right:-5px; } .rz.w { left:-5px; }
 .rz.ne,.rz.nw,.rz.se,.rz.sw { width:20px; height:20px; } .rz.ne { top:-6px; right:-6px; cursor:nesw-resize; } .rz.nw { top:-6px; left:-6px; cursor:nwse-resize; } .rz.se { bottom:-6px; right:-6px; cursor:nwse-resize; } .rz.sw { bottom:-6px; left:-6px; cursor:nesw-resize; }
 .rz:hover,.rz.drag { background:#02EBBA55; border-radius:3px; }
-.unit { width:1200px; height:960px; margin:0; display:grid; grid-template-columns:30px minmax(0,1fr) 30px; box-shadow:0 30px 80px #000c; border-radius:4px; overflow:hidden; }
+.unit { width:1700px; height:900px; margin:0; display:grid; grid-template-columns:30px minmax(0,1fr) 30px; box-shadow:0 30px 80px #000c; border-radius:4px; overflow:hidden; }
 .cheek { background:repeating-linear-gradient(92deg,#5B3A22 0 3px,#6E4729 3px 7px,#4E3120 7px 9px,#77502F 9px 14px); }
 .cheek.l { box-shadow:inset -4px 0 8px rgba(0,0,0,.6); }
 .cheek.r { box-shadow:inset 4px 0 8px rgba(0,0,0,.6); background:repeating-linear-gradient(88deg,#5B3A22 0 3px,#6E4729 3px 7px,#4E3120 7px 9px,#77502F 9px 14px); }
@@ -140,8 +140,41 @@ button[aria-pressed="true"],button.on { background:color-mix(in srgb,var(--cL) 1
 #zmBox{flex:1 1 auto;min-height:124px;height:auto!important}
 
 .main{grid-template-columns:minmax(0,1fr) 400px}.pcb{gap:4px;justify-content:space-between;border-top:1px solid var(--line);padding-top:6px}.pcb .kw{width:60px}
-.dkbig{--plat:250px}.dkbig .fdr{min-height:200px}.dkbig .dtrans .bcue,.dkbig .dtrans .bplay{min-height:64px;font-size:24px}#zmBox{min-height:110px}
+.dkbig .dtrans .bcue,.dkbig .dtrans .bplay{min-height:64px;font-size:24px}#zmBox{min-height:110px}
 .dkbig .dtrans .bcue,.dkbig .dtrans .bplay{flex:1 1 42%;padding:0 6px;font-size:22px;white-space:nowrap}
+
+@import url("https://fonts.googleapis.com/css2?family=IBM+Plex+Sans:wght@400;600;700&family=IBM+Plex+Mono:wght@500&display=swap");
+.seg { display:inline-flex; background:#1F2125; border:1px solid #4A4E57; border-radius:8px; overflow:hidden; }
+.seg button { border:0; border-radius:0; background:transparent; font-family:'IBM Plex Sans',sans-serif; font-weight:600; font-size:13px; letter-spacing:0; text-transform:none; padding:7px 10px; color:#CFCCC4; flex:1 1 auto; }
+.seg button[aria-pressed="true"] { background:#F6A970; color:#14151a; border:0; }
+.ck-ctl .seg.four button[aria-pressed="true"],.ck-ctl .seg.six button[aria-pressed="true"]{background:#4FD1C5}
+.dkc { background:#34373E; border:1px solid #4A4E57; border-left:1px solid #4A4E57; border-radius:12px; padding:12px; font-family:'IBM Plex Sans',sans-serif; }
+.dkc button { font-family:'IBM Plex Sans',sans-serif; letter-spacing:0; text-transform:none; }
+.ofx { display:grid; grid-template-columns:230px 300px minmax(0,1fr) 84px; gap:14px; align-items:center; min-height:0; }
+.ofx .ck-h,.ofx .ck-src,.ofx .ck-pm { display:none; } .ofx .ck-main { display:contents; }
+.ofx .dkc .plat,.ofx .plat { width:100%; max-height:100%; aspect-ratio:1; }
+.ck-pads { display:flex; flex-direction:column; gap:8px; align-self:stretch; justify-content:center; }
+.ck-pads .dpads { display:grid; grid-template-columns:1fr 1fr; gap:8px; } .ck-pads .pad { min-height:78px; background:#1F2125; border:2px solid #34373E; border-radius:10px; font-size:17px; font-weight:700; color:#fff; padding:0; }
+.hotbar { gap:8px; flex-wrap:wrap; } .hotbar .mini{display:none} .hotbar .hdel { padding:5px 12px; font-size:12px; border-radius:8px; background:#2A2C31; border:1px solid #4A4E57; } .hotbar .dot{font-size:11px}
+.ck-ctl { display:flex; flex-direction:column; gap:8px; } .ck-ctl .seg { width:100%; } .ck-ctl .seg button { padding:8px 0; }
+.row3 { display:grid; grid-template-columns:repeat(3,1fr); gap:8px; } .grid2 { display:grid; grid-template-columns:1fr 1fr; gap:8px; }
+.row3 button,.grid2 button { background:#3a3d45; border:1px solid #4A4E57; border-radius:8px; padding:9px 0; font-weight:600; font-size:13px; } .grid2 button[aria-pressed="true"]{background:#F6A970;color:#14151a}
+.bigrow { display:flex; gap:16px; justify-content:center; margin:4px 0; }
+.bigrow .round { width:104px; height:104px; border-radius:50%; background:#1F2125; border:5px solid #F2D16B; color:#F2D16B; font-size:23px; font-weight:700; padding:0; display:flex; align-items:center; justify-content:center; }
+.bigrow .bplay { border-color:#8FD48A; } .bigrow .bplay[aria-pressed="true"] { background:#1c2b1e; }
+.ck-tempo { display:flex; flex-direction:column; align-items:center; gap:6px; align-self:stretch; border-left:1px solid #4A4E57; padding-left:10px; }
+.ck-tempo .fdw { flex:1; width:70px; } .ck-tempo .fdr { min-height:280px; width:22px; background:#1F2125; } .ck-tempo .fdr .th { width:40px; left:-10px; height:28px; background:#e8e4da; border-color:#fff; }
+.ck-tempo .fdv { color:#ECEAE4; font-family:'IBM Plex Mono',monospace; font-size:13px; } .rng button { padding:6px 8px; font-size:12px; } .rng button[aria-pressed="true"]{background:#F6A970}
+.rst { background:#2A2C31; border:1px solid #4A4E57; border-radius:8px; padding:5px 12px; font-size:12px; }
+.dk.dkc.ofx { display:grid; grid-template-columns:230px 300px minmax(0,1fr) 84px; gap:14px; align-items:center; padding:12px; }
+.dk.dkc.ofx > .ck-pads { grid-column:1; } .dk.dkc.ofx .ck-ctl { grid-column:2; } .dk.dkc.ofx .plat { grid-column:3; }
+.dk.dkc.ofx .ck-tempo { grid-column:4; }
+.dk.dkc.ofx .plat { max-width:100%; max-height:420px; justify-self:center; width:auto; height:100%; }
+.dk.dkc.ofx > *, .dk.dkc.ofx .plat, .dk.dkc.ofx .ck-ctl, .dk.dkc.ofx .ck-tempo { grid-row:1; }
+#ovBox { display:none; } #zmBox { flex:0 0 130px!important; min-height:130px!important; }
+.dk.dkc.ofx .plat { max-height:400px; }
+.ck-pads .hotbar .dot { display:none; }
+#zmBox { flex:0 0 190px!important; min-height:190px!important; } .dk.dkc.ofx .plat { max-height:470px; }
 
 </style>
 <div id="desk"><div id="frame"><div id="win">
@@ -210,7 +243,7 @@ button[aria-pressed="true"],button.on { background:color-mix(in srgb,var(--cL) 1
 <div class="tip" id="tip" hidden></div>
 
 <script>
-var KIT = {key:"scratchfx", W:1200, H:960};
+var KIT = {key:"scratchfx", W:1700, H:900};
 /* Studio 87 mockup kit: helpers, info bubbles, knobs, selects, toggles, resizable window, modals, presets, frame loop.
    Each mockup sets KIT = { key, W, H } before this file runs. */
 var $ = function (s, r) { return (r || document).querySelector(s); };
@@ -778,8 +811,25 @@ function seekWave(cv, d) {
   function go(e) { d.pos = clamp(mpos(cv, e).x / cv.clientWidth * d.n, 0, d.n - 2); d.ghost = d.pos; }
   cv.addEventListener("pointerdown", function (e) { if (d.n < 100) return; down = true; cv.setPointerCapture(e.pointerId); go(e); }); cv.addEventListener("pointermove", function (e) { if (down) go(e); }); cv.addEventListener("pointerup", function () { down = false; });
 }
+
+/* classic platter: tick ring, grooves, label disc and a white needle line */
+function drawClassic(g, w, h, cx, cy, R, a, d, col, letter) {
+  g.beginPath(); g.arc(cx, cy, R, 0, TAU); g.fillStyle = "#1F2125"; g.fill(); g.lineWidth = 3; g.strokeStyle = d.touch ? col : "#4A4E57"; g.stroke();
+  g.save(); g.translate(cx, cy); g.rotate(a);
+  for (var k = 0; k < 72; k++) { var t = k / 72 * TAU, long = k % 2 === 0, r1 = R * (long ? 0.7 : 0.76), r2 = R * 0.9; g.beginPath(); g.moveTo(Math.cos(t) * r1, Math.sin(t) * r1); g.lineTo(Math.cos(t) * r2, Math.sin(t) * r2); g.lineWidth = long ? 3 : 2; g.strokeStyle = col; g.globalAlpha = 0.85; g.stroke(); }
+  g.globalAlpha = 1; g.restore();
+  g.beginPath(); g.arc(cx, cy, R * 0.66, 0, TAU); g.lineWidth = 2; g.strokeStyle = "#3a3d45"; g.stroke();
+  for (var r = R * 0.28; r < R * 0.64; r += R * 0.06) { g.beginPath(); g.arc(cx, cy, r, 0, TAU); g.strokeStyle = "rgba(255,255,255,.06)"; g.lineWidth = 1; g.stroke(); }
+  if (d.loop && d.loopOn) { var aa = d.loop.a / sr / REVC * TAU, bb = d.loop.b / sr / REVC * TAU; g.beginPath(); g.arc(cx, cy, R * 0.94, aa - Math.PI / 2, Math.min(bb, aa + TAU) - Math.PI / 2); g.strokeStyle = "#F2D16B"; g.lineWidth = 4; g.stroke(); }
+  g.beginPath(); g.arc(cx, cy, R * 0.2, 0, TAU); g.fillStyle = col; g.fill();
+  g.save(); g.translate(cx, cy); g.rotate(a);
+  g.beginPath(); g.moveTo(0, 0); g.lineTo(0, -R * 0.82); g.lineWidth = Math.max(4, R * 0.028); g.lineCap = "round"; g.strokeStyle = "#ECEAE4"; g.stroke();
+  g.restore();
+  g.fillStyle = "#14151a"; g.font = "bold " + Math.round(R * 0.07) + "px 'IBM Plex Sans','Barlow Condensed',sans-serif"; g.textAlign = "center"; g.textBaseline = "middle"; g.fillText("DECK", cx, cy);
+}
+var REVC = 1.8;
 /* platter: drag around the circle to scratch */
-function mkPlatter(cv, d, col, letter) {
+function mkPlatter(cv, d, col, letter, classic) {
   var down = false, a0 = 0, p0 = 0, acc = 0, la = 0; var REV = 1.8;
   var lx = 0, ly = 0;
   function ang(e) { var r = cv.getBoundingClientRect(); return Math.atan2(e.clientY - (r.top + r.height / 2), e.clientX - (r.left + r.width / 2)); }
@@ -793,6 +843,7 @@ function mkPlatter(cv, d, col, letter) {
   return function draw() {
     var cc = fit(cv); if (!cc) return; var g = cc.g, w = cc.w, h = cc.h, cx = w / 2, cy = h / 2, R = Math.min(w, h) / 2 - 4; g.clearRect(0, 0, w, h);
     var a = d.pos / sr / REV * TAU;
+    if (classic) { drawClassic(g, w, h, cx, cy, R, a, d, col, letter); return; }
     g.beginPath(); g.arc(cx, cy, R, 0, TAU); g.fillStyle = "#0c0d10"; g.fill(); g.lineWidth = 2; g.strokeStyle = d.touch ? col : "#2c2f38"; g.stroke();
     for (var r = R * 0.38; r < R * 0.97; r += 5) { g.beginPath(); g.arc(cx, cy, r, 0, TAU); g.strokeStyle = "rgba(255,255,255,.045)"; g.lineWidth = 1; g.stroke(); }
     /* beat pulse ring */
@@ -902,6 +953,61 @@ function hotBar(host, i) {
   var bt = bar.querySelector(".hdel"); bt.addEventListener("click", function () { HOTMODE[i] = !HOTMODE[i]; bt.setAttribute("aria-pressed", String(!!HOTMODE[i])); });
   host.parentNode.insertBefore(bar, host); return bar;
 }
+
+/* ===== classic deck panel (header, source tabs, platter, controls, big CUE and PLAY, tempo, pad tabs) ===== */
+function mkSeg(host, id, opts, tip, cls) {
+  var w = document.createElement("div"); w.className = "seg " + (cls || ""); host.appendChild(w); var bs = [];
+  opts.forEach(function (o) { var b = document.createElement("button"); b.textContent = o[1]; b.setAttribute("data-tip", tip + (o[2] ? " " + o[2] : "")); w.appendChild(b); bs.push(b); b.addEventListener("click", function () { setParam(id, o[0], true); }); });
+  function paint(v) { bs.forEach(function (b, k) { b.setAttribute("aria-pressed", String(opts[k][0] === v)); }); } addUI(id, paint); paint(S[id]); return w;
+}
+function mkSegTog(host, id, label, tip) { var b = document.createElement("button"); b.textContent = label; b.setAttribute("data-tip", tip); host.appendChild(b); b.addEventListener("click", function () { setParam(id, !S[id], true); }); addUI(id, function (v) { b.setAttribute("aria-pressed", String(!!v)); }); b.setAttribute("aria-pressed", String(!!S[id])); return b; }
+function buildDeckClassic(host, E, i, col, letter, o) {
+  o = o || {}; var d = E.d[i], root = document.createElement("div"); root.className = "dk dkc"; root.style.setProperty("--dc", col);
+  root.innerHTML =
+    '<div class="ck-h"><b class="ck-name">DECK ' + letter + '</b><span class="dmeta"></span><button class="ban" data-tip="Detect the tempo and key of this deck again (shown as BPM, key and Camelot code).">Analyze key &amp; BPM</button></div>' +
+    '<div class="ck-src"></div>' +
+    '<div class="ck-main"><canvas class="plat"></canvas><div class="ck-ctl"></div><div class="ck-tempo"></div></div>' +
+    '<div class="ck-pm"></div><div class="dpads"></div>';
+  host.appendChild(root); var q = function (s) { return $(s, root); };
+  var plat = mkPlatter(q(".plat"), d, col, letter, true);
+  def("sy" + i, false); def("kk" + i, false); def("qu" + i, true); def("rg" + i, 8); def("tp" + i, 0);
+  /* source tabs and track name bar */
+  var sr_ = q(".ck-src"); mkSeg(sr_, "md" + i, [["file", "File"], ["daw", "DAW"], ["samp", "Sampler"]], "Source of this deck. File: plays once and stops at the end. DAW: loops what the host sends. Sampler: loops, with the sampler pads ready.");
+  var nm = document.createElement("div"); nm.className = "dname barname"; nm.textContent = "No track"; nm.setAttribute("data-tip", "The track on this deck. Click to load your own file (wav, mp3, flac, aiff, ogg). It stays in this browser tab."); sr_.appendChild(nm); root._nameClick = nm;
+  /* controls */
+  var c = q(".ck-ctl"), r1 = document.createElement("div"); r1.className = "seg four"; c.appendChild(r1);
+  mkSegTog(r1, "sy" + i, "Sync", "Match this deck's tempo to the host BPM (or to the master deck) and keep it matched.");
+  var bm = mkSegTog(r1, "ml" + i, "Master", "Make this deck the tempo master: the other deck's Sync follows it.");
+  mkSegTog(r1, "kk" + i, "Key lock", "Key lock: change the tempo without changing the pitch."); mkSegTog(r1, "qu" + i, "Quant", "Quantize: cue points, hot cues and loops snap to the nearest beat.");
+  var LB = [["1/4", 0.25], ["1/2", 0.5], ["1", 1], ["2", 2], ["4", 4], ["8", 8]], lbs = [], r2 = document.createElement("div"); r2.className = "seg six"; c.appendChild(r2);
+  LB.forEach(function (l) { var b = document.createElement("button"); b.textContent = l[0].replace("1/4", "¼").replace("1/2", "½"); b.setAttribute("data-tip", "Loop of " + l[0] + " beat" + (l[1] > 1 ? "s" : "") + " from here. Press again to leave the loop."); r2.appendChild(b); lbs.push(b); b.addEventListener("click", function () { if (d.n < 100) return; if (d.loopOn && d._lb === l[1]) d.loopOn = false; else { d._lb = l[1]; d.setLoop(l[1]); } }); });
+  var r3 = document.createElement("div"); r3.className = "row3"; c.appendChild(r3);
+  [["Loop in", function () { var p = S["qu" + i] ? d.nearestBeat(d.pos) : d.pos; d.loop = { a: p, b: d.loop ? Math.max(d.loop.b, p + 1) : p + d.beatLen() }; }, "Set the loop start here."], ["Loop out", function () { var p = S["qu" + i] ? d.nearestBeat(d.pos) : d.pos; if (!d.loop) d.loop = { a: Math.max(0, p - d.beatLen()), b: p }; else d.loop.b = Math.max(p, d.loop.a + 100); d.loopOn = true; }, "Set the loop end here and start looping."], ["Exit", function () { d.loopOn = false; }, "Leave the loop."]].forEach(function (x) { var b = document.createElement("button"); b.textContent = x[0]; b.setAttribute("data-tip", x[2]); r3.appendChild(b); b.addEventListener("click", x[1]); });
+  var r4 = document.createElement("div"); r4.className = "seg three"; c.appendChild(r4);
+  mkSegTog(r4, "vinyl", "Vinyl", "On: pausing slows the record down like a turntable. Off: it stops at once.");
+  var bt = document.createElement("button"); bt.textContent = "Trans."; bt.setAttribute("data-tip", "Transform gate: chops the sound on and off in time with the beat."); r4.appendChild(bt); bt.addEventListener("click", function () { var on = bt.getAttribute("aria-pressed") !== "true"; bt.setAttribute("aria-pressed", String(on)); d.transOn = on; d.trans = on; if (!on) d.transPh = 0; });
+  function holdBtn(host, label, tip, fn) { var b = document.createElement("button"); b.textContent = label; b.setAttribute("data-tip", tip); host.appendChild(b); var dn = false; b.addEventListener("pointerdown", function (e) { if (d.n < 100) return; ensureCtx(); E.start(); dn = true; b.setPointerCapture(e.pointerId); b.setAttribute("aria-pressed", "true"); fn(true); }); var up = function () { if (!dn) return; dn = false; b.setAttribute("aria-pressed", "false"); fn(false); }; b.addEventListener("pointerup", up); b.addEventListener("pointercancel", up); return b; }
+  holdBtn(r4, "Stutter", "Hold: retriggers the cue point every 1/16 beat.", function (on) { d.stutter = on; if (on) { d.cue = d.pos; d.stTick = 0; } });
+  var r5 = document.createElement("div"); r5.className = "grid2"; c.appendChild(r5);
+  var bb = document.createElement("button"); bb.textContent = "Brake"; bb.setAttribute("data-tip", "Slows the record to a stop."); r5.appendChild(bb); bb.addEventListener("click", function () { ensureCtx(); E.start(); d.mode = "brake"; d.brakeT = 0.9; });
+  var bs2 = document.createElement("button"); bs2.textContent = "Backspin"; bs2.setAttribute("data-tip", "The record spins back fast, then stops."); r5.appendChild(bs2); bs2.addEventListener("click", function () { if (d.n < 100) return; ensureCtx(); E.start(); d.mode = "back"; d.playing = true; clearTimeout(d._spt); d._spt = setTimeout(function () { d.mode = "brake"; d.brakeT = 0.3; }, 520); });
+  holdBtn(r5, "Roll", "Hold: rolls a tiny loop of 1/8 beat; letting go lands where the song would have been.", function (on) { if (on) { d.slip = true; d.ghost = d.pos; var bl = d.beatLen() / 8, a = d.pos; d.loop = { a: a, b: a + bl }; d.loopOn = true; d.mode = "roll"; } else { d.loopOn = false; d.mode = "normal"; d.pos = d.ghost; d.slip = false; } });
+  holdBtn(r5, "Censor", "Hold: plays backwards; letting go jumps to where the song would have been.", function (on) { if (on) { d.slip = true; d.ghost = d.pos; d.mode = "censor"; } else { d.mode = "normal"; d.pos = d.ghost; d.slip = false; d.rate = d.tempo; } });
+  /* big round CUE and PLAY */
+  var big = document.createElement("div"); big.className = "bigrow"; c.appendChild(big);
+  var bc = document.createElement("button"); bc.className = "bcue round"; bc.textContent = "CUE"; bc.setAttribute("data-tip", "CUE. While playing: jumps back to the cue point and pauses. While paused: sets the cue point here; hold to preview from it."); big.appendChild(bc);
+  var bp = document.createElement("button"); bp.className = "bplay round"; bp.innerHTML = '<svg viewBox="0 0 60 40" width="64" height="44"><path d="M6 6 L30 20 L6 34 Z" fill="#8FD48A"/><rect x="38" y="6" width="5" height="28" fill="#8FD48A"/><rect x="48" y="6" width="5" height="28" fill="#8FD48A"/></svg>'; bp.setAttribute("data-tip", "Play or pause the deck."); big.appendChild(bp);
+  function stop() { if (S.vinyl) { d.mode = "brake"; d.brakeT = 0.35; } else { d.playing = false; d.rate = 0; } }
+  bp.addEventListener("click", function () { if (d.n < 100) return; ensureCtx(); E.start(); if (d.playing && d.mode !== "brake") stop(); else { d.mode = "normal"; d.playing = true; } });
+  var prev = false; bc.addEventListener("pointerdown", function () { if (d.n < 100) return; ensureCtx(); E.start(); if (d.playing) { d.playing = false; d.rate = 0; d.mode = "normal"; d.pos = d.cue; } else if (Math.abs(d.pos - d.cue) > sr * 0.02) { d.cue = S["qu" + i] ? d.nearestBeat(d.pos) : d.pos; } else { prev = true; d.playing = true; } });
+  function cueUp() { if (prev) { prev = false; d.playing = false; d.rate = 0; d.pos = d.cue; } } bc.addEventListener("pointerup", cueUp); bc.addEventListener("pointerleave", cueUp);
+  /* tempo */
+  var tp = q(".ck-tempo"); mkFader(tp, { id: "tp" + i, label: "Tempo", min: -1, max: 1, def: 0, snap: 0.02, fmt: function (v) { var t = v * S["rg" + i]; return (t > 0 ? "+" : "") + t.toFixed(1) + "%"; }, tip: "Speed of this deck. Up is faster. The range buttons set how far it goes." });
+  mkSeg(tp, "rg" + i, [[8, "8"], [16, "16"], [50, "50"]], "How far the tempo fader goes (percent).", "rng"); addUI("rg" + i, function () { if (UI["tp" + i]) UI["tp" + i](S["tp" + i]); });
+  var rs = document.createElement("button"); rs.className = "rst"; rs.textContent = "Reset"; rs.setAttribute("data-tip", "Put the tempo fader back to zero."); tp.appendChild(rs); rs.addEventListener("click", function () { setParam("tp" + i, 0, true); });
+  return { root: root, q: q, plat: plat, lbs: lbs, bp: bp, bm: bm, setPads: null, pmHost: q(".ck-pm"), LB: LB };
+}
+
 function hotPads(host, E, i, mode) {
   var d = E.d[i]; host.innerHTML = ""; var bs = [], m = mode || "hot"; if (m === "hot" && !host._hb) host._hb = hotBar(host, i); if (m !== "hot" && host._hb) { host._hb.remove(); host._hb = null; }
   var SHOTS = [["Kick", shotKick], ["Snare", shotSnare], ["Clap", shotClap], ["Hat", shotHat], ["Horn", shotHorn], ["Zap", shotZap], ["Kick", shotKick], ["Horn", shotHorn]];
@@ -967,10 +1073,17 @@ var deckUI, padsHost, padMode = "hot";
 (function build() {
   var srcOpts = []; for (var k in TR) srcOpts.push([k, TR[k][0]]); srcOpts.push(["file", "Your file"]);
   mkSel($("#rigSrc"), "src", "Source", srcOpts, "What the plugin hears from your DAW. In a DAW this is the track you put Scratch Cat FX on.");
-  mkTog($("#rigSrc"), "vinyl", "Vinyl stop", "On: pressing Play to stop slows the record down like a turntable. Off: it stops at once.", true);
   mkKnob($("#rigHost"), { id: "hostBpm", label: "Host BPM", min: 70, max: 180, step: 0.5, def: 150, fmt: function (v) { return v.toFixed(1); }, tip: "The tempo your DAW runs at. Sync matches the deck to it." });
   var zr = $("#zoomRow"); [2, 4, 8, 16].forEach(function (z) { var b = document.createElement("button"); b.textContent = z + " bars"; b.setAttribute("data-tip", "Show " + z + " bars across the waveform."); zr.appendChild(b); b.addEventListener("click", function () { setParam("zoom", z, true); }); b.setAttribute("data-z", z); });
-  deckUI = buildDeck($("#deckHost"), E, 0, "#FF8A3D", "A", { big: true });
+  HOTC.splice(0, 8, "#F28BA8", "#F2D16B", "#4FD1C5", "#B99BEA", "#F6A970", "#7FB6F2", "#8FD48A", "#ECEAE4"); def("ml0", false); def("md0", "file");
+  deckUI = buildDeckClassic($("#deckHost"), E, 0, "#FF8A3D", "A", {});
+  (function oldLayout() {
+    var r = deckUI.root, ctl = $(".ck-ctl", r), kids = {}; r.classList.add("ofx");
+    ["four", "six", "three"].forEach(function (c) { kids[c] = $(".seg." + c, ctl); }); kids.row3 = $(".row3", ctl); kids.grid2 = $(".grid2", ctl); kids.big = $(".bigrow", ctl);
+    $("button:nth-child(2)", kids.four).remove();
+    [kids.three, kids.grid2, kids.six, kids.row3, kids.big, kids.four].forEach(function (n) { ctl.appendChild(n); });
+    var pc = document.createElement("div"); pc.className = "ck-pads"; r.insertBefore(pc, $(".ck-main", r)); pc.appendChild($(".dpads", r));
+  })();
   padsHost = $(".dpads", deckUI.root); hotPads(padsHost, E, 0, "hot");
   /* mixer */
   var mk_ = $("#mxK"); mkKnob(mk_, { id: "t0", label: "Trim", min: -12, max: 12, mid: 0, def: 0, fmt: fmtDb, tip: "Input gain of the deck." });
@@ -1012,7 +1125,7 @@ function loadSource() {
   if (id === "file") { if (!fileBuf) { $("#fileIn").click(); return; } buf = fileBuf; name = fileName; bpm = 0; }
   else { if (!CUR || CUR.id !== id) { var g = TR[id][1](); CUR = { id: id, L: g.buf.getChannelData(0), R: g.buf.getChannelData(1), bpm: g.bpm, name: TR[id][0] }; } buf = CUR; name = CUR.name; bpm = CUR.bpm; }
   var L = buf.L, R = buf.R, a = analyzeTrack(mixMono(L, R)); if (!bpm) bpm = a.bpm;
-  DK.load(L, R, name, bpm, a.key); DRY.load(L, R, name, bpm, a.key); DK.loopTrack = true; DRY.loopTrack = true; DRY.keylock = true; setParam("hostBpm", Math.round(bpm * 2) / 2, true); setParam("tp0", 0, true);
+  DK.load(L, R, name, bpm, a.key); if (DK.hot.every(function (h) { return h === null; })) for (var hk = 0; hk < 4; hk++) DK.hot[hk] = Math.round(DK.beat0 + hk * 4 * DK.beatLen()); DRY.load(L, R, name, bpm, a.key); DK.loopTrack = true; DRY.loopTrack = true; DRY.keylock = true; setParam("hostBpm", Math.round(bpm * 2) / 2, true); setParam("tp0", 0, true);
   $(".dname", deckUI.root).textContent = name; $(".dmeta", deckUI.root).textContent = "BPM " + bpm.toFixed(1) + "  ·  Key " + a.key + " (" + a.cam + ")";
   $("#anaInfo").textContent = "Analyzed: " + bpm.toFixed(1) + " BPM, key " + a.key + " (" + a.cam + ")"; $("#mxInfo").textContent = "";
 }
@@ -1034,9 +1147,8 @@ PAINT.push(function (dt) {
   deckUI.plat();
   var v = fit(cvV); vuS = Math.max(E.vu[0], vuS * 0.9); if (v) drawVu(v, vuS);
   pm.upd(E.pk.l, E.pk.r, dt); var m = fit(cvM); if (m) drawMeterPair(m, pm.hl, pm.hr, E.pk.l, E.pk.r);
-  $$(".bplay", deckUI.root)[0].innerHTML = DK.playing && DK.mode !== "brake" ? "&#9632; Pause" : "&#9654; Play";
-  $$(".bplay", deckUI.root)[0].setAttribute("aria-pressed", String(DK.playing));
-  DK.lbs = deckUI.lbs; deckUI.lbs.forEach(function (bt, i) { bt.setAttribute("aria-pressed", String(!!(DK.loopOn && DK._lb === [0.5, 1, 2, 4, 8][i]))); });
+    $$(".bplay", deckUI.root)[0].setAttribute("aria-pressed", String(DK.playing));
+  DK.lbs = deckUI.lbs; deckUI.lbs.forEach(function (bt, i) { bt.setAttribute("aria-pressed", String(!!(DK.loopOn && DK._lb === [0.25, 0.5, 1, 2, 4, 8][i]))); });
   var tt = DK.n > 100 ? DK.pos / sr : 0; $(".dmeta", deckUI.root).textContent = "BPM " + (DK.bpm * DK.tempo).toFixed(1) + "  ·  Key " + DK.key + "  ·  " + fmtT(tt);
 });
 /* ---------- presets ---------- */

@@ -29,6 +29,12 @@ jobs:
         run: cmake -S . -B build -DCMAKE_BUILD_TYPE=Release  2>&1 | tee -a ci.log; exit ${PIPESTATUS[0]}
       - name: Build
         run: cmake --build build --config Release --parallel 4 2>&1 | tee -a ci.log; exit ${PIPESTATUS[0]}
+      - name: Validate the VST3 (pluginval, strictness 5)
+        run: |
+          sudo apt-get install -y xvfb
+          curl -sL -o pv.zip https://github.com/Tracktion/pluginval/releases/latest/download/pluginval_Linux.zip && unzip -q pv.zip
+          VST=$(find build -name "*.vst3" -maxdepth 4 | head -1)
+          xvfb-run -a ./pluginval --strict-level 5 --validate-in-process --skip-gui-tests "$VST" 2>&1 | tee -a ci.log; exit ${PIPESTATUS[0]}
       - uses: actions/upload-artifact@v4
         with:
           name: ScratchCatFx-${{ runner.os }}

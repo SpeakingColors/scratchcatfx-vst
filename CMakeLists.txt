@@ -1,10 +1,12 @@
 cmake_minimum_required(VERSION 3.22)
-project(scratchcatfx VERSION 0.1.0 LANGUAGES C CXX)
+project(scratchcatfx VERSION 0.2.0 LANGUAGES C CXX)
 
 include(FetchContent)
 FetchContent_Declare(juce GIT_REPOSITORY https://github.com/juce-framework/JUCE.git
     GIT_TAG 8.0.16-security GIT_SHALLOW TRUE)
 FetchContent_MakeAvailable(juce)
+FetchContent_Declare(cat_ui GIT_REPOSITORY https://github.com/SpeakingColors/cat-ui GIT_TAG main)
+FetchContent_MakeAvailable(cat_ui)
 
 juce_add_plugin(ScratchCatFx
     COMPANY_NAME "Studio 87"
@@ -13,8 +15,8 @@ juce_add_plugin(ScratchCatFx
     FORMATS VST3 Standalone
     PRODUCT_NAME "Scratch Cat FX"
     IS_SYNTH FALSE NEEDS_MIDI_INPUT FALSE)
-target_sources(ScratchCatFx PRIVATE src/Plugins.cpp src/fx/ScratchFx.cpp)
+target_sources(ScratchCatFx PRIVATE src/Plugins.cpp src/fx/ScratchFx.cpp src/fx/ScratchFxEditor.cpp)
 target_include_directories(ScratchCatFx PRIVATE src)
-target_compile_definitions(ScratchCatFx PUBLIC JUCE_WEB_BROWSER=0 JUCE_USE_CURL=0 JUCE_VST3_CAN_REPLACE_VST2=0)
-target_link_libraries(ScratchCatFx PRIVATE juce::juce_audio_utils juce::juce_dsp
+target_compile_definitions(ScratchCatFx PUBLIC JUCE_WEB_BROWSER=0 JUCE_USE_CURL=0 JUCE_VST3_CAN_REPLACE_VST2=0 JUCE_USE_MP3AUDIOFORMAT=1)
+target_link_libraries(ScratchCatFx PRIVATE cat_ui juce::juce_audio_utils juce::juce_dsp
     PUBLIC juce::juce_recommended_config_flags juce::juce_recommended_warning_flags)

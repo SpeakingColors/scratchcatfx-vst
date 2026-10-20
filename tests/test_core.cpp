@@ -99,8 +99,76 @@ static void testMixerRegression() {
       run(e, p, 220, 0.5, L, R, [](int) {}); bool bad = false; float m = 0; for (float v : L) { if (!std::isfinite(v)) bad = true; m = std::max(m, std::fabs(v)); }
       CHECK(!bad && m <= 1.0f && rms(L, 12000, 24000) > 0.05, "PurrOne colour at the extreme stays finite, bounded and audible"); }
 }
+
+// ---- v0.2: crossfader, deck fader, kills, FX target, capture, looping tracks ----
+static std::shared_ptr<Track> sineTrack(double hz, double secs, float amp = 0.5f) {
+    auto t = std::make_shared<Track>(); t->sr = sr; const size_t n = (size_t) (secs * sr); t->l.resize(n); t->r.resize(n);
+    for (size_t i = 0; i < n; ++i) t->l[i] = t->r[i] = amp * (float) std::sin(2 * kPi * hz * (double) i / sr);
+    return t;
+}
+static void testCrossfaderAndFader() {
+    auto go = [&](float xf, int curve, float fader, double& hzOut, double& rmsOut) {
+        Engine e; e.prepare(sr); FxParams p; p.xf = xf; p.xCurve = curve; p.deckFader = fader; std::vector<float> L, R;
+        e.deck.setTrack(sineTrack(300, 6.0)); e.deck.setPlaying(true);            // scratch side plays 300 Hz, the DAW input is 1000 Hz
+        run(e, p, 1000, 1.0, L, R, [](int) {}); hzOut = zeroCrossHz(L, 24000, 48000); rmsOut = rms(L, 24000, 48000);
+    };
+    double hz, r;
+    go(-1.f, 0, 1.f, hz, r); CHECK(std::fabs(hz - 300) < 20 && r > 0.25, "crossfader left plays only the scratch deck (%.0f Hz, rms %.3f)", hz, r);
+    double rL = r;
+    go(1.f, 0, 1.f, hz, r); CHECK(std::fabs(hz - 1000) < 40 && r > 0.25, "crossfader right plays only the DAW input (%.0f Hz, rms %.3f)", hz, r);
+    go(0.f, 0, 1.f, hz, r); CHECK(r > 1.2 * rL, "smooth curve in the middle has both sides (rms %.3f vs %.3f)", r, rL);
+    double r1; go(0.f, 2, 1.f, hz, r1); CHECK(r1 < r, "constant power middle is quieter than the smooth middle (%.3f vs %.3f)", r1, r);
+    { double rs, rm; go(0.5f, 1, 1.f, hz, rs); go(0.5f, 0, 1.f, hz, rm); CHECK(rs > 1.1 * rm, "sharp curve keeps both sides at full until near the end (%.3f vs smooth %.3f)", rs, rm); }
+    go(-1.f, 0, 0.f, hz, r); CHECK(r < 0.01, "deck fader down silences the deck (rms %.4f)", r);
+    go(-1.f, 0, 1.25f, hz, r); CHECK(r > 1.15 * rL, "deck fader up adds level (%.3f vs %.3f)", r, rL);
+    // live deck: no doubling, the input passes once
+    { Engine e; e.prepare(sr); FxParams p; p.xf = 0.f; std::vector<float> L, R; run(e, p, 1000, 1.0, L, R, [](int) {}); CHECK(std::fabs(rms(L, 24000, 48000) - 0.5 / std::sqrt(2.0)) < 0.01, "live deck does not double at the middle (rms %.3f)", rms(L, 24000, 48000)); }
+    // scratching the live ring: moving the fader right cuts over to the straight input
+    { Engine e; e.prepare(sr); FxParams p; std::vector<float> L, R;
+      run(e, p, 700, 1.5, L, R, [&](int b) { if (b == 40) e.touch(true, 0.0); if (b == 200) p.xf = 1.f; });
+      float lo = 9, hi = -9; for (size_t i = 36000; i < 40000; ++i) { lo = std::min(lo, L[i]); hi = std::max(hi, L[i]); }
+      CHECK(hi - lo < 0.02f && std::fabs(zeroCrossHz(L, 66000, 70000) - 700) < 30, "frozen live ring holds, fader right brings the DAW input back (%.0f Hz)", zeroCrossHz(L, 66000, 70000)); }
+}
+static void testKillsAndTarget() {
+    for (int band = 0; band < 3; ++band) {
+        const double hz = band == 0 ? 80 : band == 1 ? 1000 : 9000; Engine e, e0; e.prepare(sr); e0.prepare(sr); FxParams p, n; std::vector<float> L, R, L0, R0;
+        (band == 0 ? p.killLo : band == 1 ? p.killMid : p.killHi) = true;
+        run(e, p, hz, 1.0, L, R, [](int) {}); run(e0, n, hz, 1.0, L0, R0, [](int) {});
+        CHECK(rms(L, 24000, 48000) < 0.3 * rms(L0, 24000, 48000), "kill button %d cuts %.0f Hz", band, hz);
+    }
+    { // kills shape the DAW input side too
+        Engine e; e.prepare(sr); FxParams p; p.xf = 1.f; p.killHi = true; std::vector<float> L, R;
+        e.deck.setTrack(sineTrack(300, 6.0)); run(e, p, 9000, 1.0, L, R, [](int) {});
+        CHECK(rms(L, 24000, 48000) < 0.05, "high kill also cuts the straight DAW input (rms %.4f)", rms(L, 24000, 48000)); }
+    { // FX on the scratch deck leaves the DAW side dry; FX on master wets both
+        auto wet = [&](int target) { Engine e; e.prepare(sr); FxParams p; p.xf = 1.f; p.fxTarget = target; p.fxOn[0] = true; p.fxType[0] = FxFilter; p.fxP1[0] = 0.05f; p.fxP2[0] = 1.f; p.chainMix = 1.f;
+          std::vector<float> L, R; e.deck.setTrack(sineTrack(300, 6.0)); run(e, p, 1000, 0.6, L, R, [](int) {}); return rms(L, 12000, 28000); };
+        const double deckFx = wet(0), masterFx = wet(1);
+        CHECK(std::fabs(deckFx - 0.5 / std::sqrt(2.0)) < 0.02, "FX on the deck leaves the DAW side untouched (rms %.3f)", deckFx);
+        CHECK(std::fabs(masterFx - deckFx) > 0.01, "FX on the master changes the DAW side (%.3f vs %.3f)", masterFx, deckFx); }
+}
+static void testCaptureAndLoop() {
+    Engine e; e.prepare(sr); FxParams p; std::vector<float> L, R;
+    run(e, p, 440, 3.0, L, R, [](int) {});
+    Track t; const size_t got = e.deck.grabLast(2.0, t);
+    CHECK(got == (size_t) (2.0 * sr), "capture returns the last 2 s (%zu frames)", got);
+    double hz = 0; { int z = 0; for (size_t i = 1; i < t.l.size(); ++i) if ((t.l[i - 1] < 0) != (t.l[i] < 0)) ++z; hz = 0.5 * z / ((double) t.l.size() / sr); }
+    CHECK(std::fabs(hz - 440) < 5, "captured audio is the 440 Hz input (%.1f Hz)", hz);
+    CHECK(e.deck.grabLast(500.0, t) <= (size_t) (sr * 60.0), "capture never asks for more than the ring holds");
+    // a loop plays past its end instead of stopping
+    auto trk = std::make_shared<Track>(t); trk->bpm = 120; trk->firstBeat = 0; e.deck.setTrack(trk); e.deck.setPlaying(true);
+    p.xf = -1.f; run(e, p, 100, 6.0, L, R, [](int) {});
+    CHECK(rms(L, (size_t) (5.0 * sr), (size_t) (5.9 * sr)) > 0.2, "captured loop keeps playing after its end");
+    CHECK(e.deck.isPlaying(), "loop deck still playing");
+    // the input history for the live waveform fills in
+    CHECK(e.histIdx.load() > 90, "history bins written (%u)", e.histIdx.load());
+    // recording continues while a file plays, so Capture works any time
+    Track t2; run(e, p, 220, 1.0, L, R, [](int) {}); e.deck.grabLast(0.5, t2);
+    int z = 0; for (size_t i = 1; i < t2.l.size(); ++i) if ((t2.l[i - 1] < 0) != (t2.l[i] < 0)) ++z;
+    CHECK(std::fabs(0.5 * z / ((double) t2.l.size() / sr) - 220) < 5, "ring keeps recording while a track plays");
+}
 int main() {
-    testPassthrough(); testScratch(); testBrakeBackspin(); testEqFx(); testMixerRegression();
+    testPassthrough(); testScratch(); testBrakeBackspin(); testEqFx(); testMixerRegression(); testCrossfaderAndFader(); testKillsAndTarget(); testCaptureAndLoop();
     if (fails) { std::printf("%d FAILED\n", fails); return 1; }
     std::printf("all tests passed\n"); return 0;
 }

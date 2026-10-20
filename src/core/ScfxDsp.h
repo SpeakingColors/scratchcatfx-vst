@@ -130,8 +130,8 @@ struct Delay {
     }
 };
 
-// One effect slot. p1 and p2 are 0..1: Filter: p1 = cutoff, p2 = dry/wet. Echo: p1 = feedback, p2 = dry/wet.
-// Reverb: p1 = size, p2 = dry/wet. Flanger: p1 = depth, p2 = dry/wet. Crush: p1 = amount, p2 = dry/wet.
+// One effect slot. p1 and p2 are 0..1, p2 is always the dry/wet.
+// Filter: p1 sweeps low pass to high pass. Echo: p1 picks the time (1/4, 1/2, 3/4, 1 beat). Reverb: p1 = size, p2 = dry/wet. Flanger: p1 = depth, p2 = dry/wet. Crush: p1 = amount, p2 = dry/wet.
 struct FxSlot {
     double sr = 44100;
     int type = FxOff; bool on = false;
@@ -163,12 +163,14 @@ struct FxSlot {
         float* ch[2] = { l, r };
         const float sm = 1.f - std::exp(-1.f / (0.01f * (float) sr));
         if (type == FxFilter) {
-            // p1 0..1 sweeps a resonant band pass: 80 Hz to 12 kHz
-            const double f = 80.0 * std::pow(12000.0 / 80.0, (double) p1);
-            for (auto& s2 : flt) s2.set(sr, f, 2.5);
+            // p1 sweeps a low pass (left half, open at 0) into a high pass (right half), like a DJ filter knob
+            double f = p1 < 0.5f ? 18000.0 * std::pow(0.015, 1.0 - (double) p1 * 2.0) : 20.0 * std::pow(900.0, ((double) p1 - 0.5) * 2.0);
+            if (p1 < 0.02f) f = 18000.0;
+            for (auto& s2 : flt) s2.set(sr, f, 1.0 / 0.35);
         }
-        const float fbk = clampf(p1, 0.f, 1.f) * 0.9f;
-        const float dly = clampf((float)(60.0 / bpm * echoBeats * sr), 100.f, (float)(sr * 2.4));
+        static const float kEchoBeats[4] = { 0.25f, 0.5f, 0.75f, 1.f };      // echo time comes from the Amount knob, in beats
+        const float beats = kEchoBeats[std::min(3, (int) (clampf(p1, 0.f, 1.f) * 4.f))];
+        const float dly = clampf((float)(60.0 / bpm * beats * sr), 100.f, (float)(sr * 2.4));
         const float room = 0.7f + 0.28f * clampf(p1, 0.f, 1.f);
         for (int i = 0; i < n; ++i) {
             wetS += (target - wetS) * sm;
@@ -176,11 +178,10 @@ struct FxSlot {
             if (w < 0.0005f && target == 0.f) { if (type == FxEcho) { ed[0].push(ch[0][i]); ed[1].push(ch[1][i]); } continue; }
             float in[2] = { ch[0][i], ch[1][i] }, out[2] = { in[0], in[1] };
             if (type == FxFilter) {
-                for (int c = 0; c < 2; ++c) { flt[c].tick(in[c]); out[c] = flt[c].bp * 1.2f; }
+                for (int c = 0; c < 2; ++c) { flt[c].tick(in[c]); out[c] = p1 >= 0.5f ? flt[c].hp : flt[c].lp; }
             } else if (type == FxEcho) {
-                // ping-pong: left feeds right and back
                 const float dl = ed[0].read(dly), dr = ed[1].read(dly);
-                ed[0].push(in[0] + dr * fbk); ed[1].push(in[1] + dl * fbk);
+                ed[0].push(in[0] + dl * 0.55f); ed[1].push(in[1] + dr * 0.55f);
                 out[0] = dl; out[1] = dr;
             } else if (type == FxReverb) {
                 const float x = (in[0] + in[1]) * 0.015f;
@@ -198,13 +199,13 @@ struct FxSlot {
                     out[c] = acc * 3.f;
                 }
             } else if (type == FxFlanger) {
-                lfo += 0.3f / (float) sr; if (lfo >= 1.f) lfo -= 1.f;
+                lfo += (0.3f + 0.4f * clampf(p1, 0.f, 1.f)) / (float) sr; if (lfo >= 1.f) lfo -= 1.f;
                 const float m = 0.5f + 0.5f * std::sin(2.f * (float) kPi * lfo);
-                const float d = (0.0005f + 0.004f * m * clampf(p1, 0.05f, 1.f)) * (float) sr;
-                for (int c = 0; c < 2; ++c) { const float y = fd[c].read(d); fd[c].push(in[c] + y * 0.5f); out[c] = in[c] * 0.7f + y; }
+                const float d = (0.001f + 0.004f * m) * (float) sr;          // p1 is the sweep rate
+                for (int c = 0; c < 2; ++c) { const float y = fd[c].read(d); fd[c].push(in[c] + y * 0.6f); out[c] = in[c] + y; }
             } else if (type == FxCrush) {
-                const int hold = 1 + (int)(clampf(p1, 0.f, 1.f) * 24.f);
-                const float steps = std::pow(2.f, 16.f - clampf(p1, 0.f, 1.f) * 12.f);
+                const int hold = 1 + (int)(clampf(p1, 0.f, 1.f) * 20.f);
+                const float steps = std::pow(2.f, 3.f + 9.f * (1.f - clampf(p1, 0.f, 1.f)));
                 if (crushCnt % hold == 0) for (int c = 0; c < 2; ++c) crushHold[c] = std::round(in[c] * steps) / steps;
                 ++crushCnt; out[0] = crushHold[0]; out[1] = crushHold[1];
             }

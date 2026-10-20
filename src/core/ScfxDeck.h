@@ -3,6 +3,7 @@
 #pragma once
 #include "ScfxAnalysis.h"
 #include <memory>
+#include <atomic>
 #include <array>
 #include <string>
 
@@ -25,7 +26,7 @@ public:
     static constexpr double kPlatterRevPerSec = 100.0 / 3.0 / 60.0;   // 33 1/3 rpm is normal speed
 
     void prepare(double hostSr) {
-        fs = hostSr; ringSize = (size_t)(hostSr * 60.0); ringL.assign(ringSize, 0.f); ringR.assign(ringSize, 0.f); writeIdx = 0;
+        fs = hostSr; ringSize = (size_t)(hostSr * 60.0); ringL.assign(ringSize, 0.f); ringR.assign(ringSize, 0.f); writeIdx = 0; headA.store(0);
         vel = 0; for (auto& g : grains) g.on = false; hopCnt = 0; gateG = 1.f;
     }
     // Returns the track that was loaded before, so the caller can free it off the audio thread.
@@ -106,6 +107,23 @@ public:
     }
 
     // ---- state for the UI ----
+    // The last `seconds` of the DAW input, copied into a track (message thread safe: only reads samples older than the current block).
+    // Returns the number of frames copied (0 if nothing recorded yet). Caller must not run this during prepare().
+    size_t grabLast(double seconds, Track& t, unsigned long long endHead = 0) const {
+        const unsigned long long latest = headA.load(std::memory_order_acquire);
+        const unsigned long long head = endHead > 0 && endHead <= latest && latest - endHead < ringSize / 2 ? endHead : latest;
+        size_t want = (size_t) std::max(0.0, seconds * fs);
+        want = std::min<size_t>(want, ringSize > 8192 ? ringSize - 8192 : 0);
+        if (head < want) want = (size_t) head;
+        if (want < 1024 || ringSize == 0) return 0;
+        t.l.resize(want); t.r.resize(want);
+        for (size_t i = 0; i < want; ++i) { const size_t k = (size_t) ((head - want + i) % ringSize); t.l[i] = ringL[k]; t.r[i] = ringR[k]; }
+        t.sr = fs; return want;
+    }
+    unsigned long long headFrames() const { return headA.load(std::memory_order_acquire); }
+    void setTrackLoop(bool b) { loopTrackOn = b; }
+    // Live source only: how far behind "now" the read head is, in seconds (0 while live).
+    double behindSeconds() const { return src == Source::Live ? std::max(0.0, ((double) writeIdx - pos) / fs) : 0.0; }
     double positionSeconds() const { return src == Source::File && trk ? pos / trk->sr : (double) pos / fs; }
     double lengthSeconds() const { return trk ? (double) trk->frames() / trk->sr : 0.0; }
     double speed() const { return vel; }
@@ -131,7 +149,8 @@ public:
     void process(float* outL, float* outR, int n, const float* inL, const float* inR) {
         const double srcRatio = (src == Source::File && trk) ? trk->sr / fs : 1.0;
         // keep the live input in the ring
-        if (src == Source::Live) for (int i = 0; i < n; ++i) { ringL[writeIdx % ringSize] = inL ? inL[i] : 0.f; ringR[writeIdx % ringSize] = inR ? inR[i] : (inL ? inL[i] : 0.f); ++writeIdx; }
+        for (int i = 0; i < n; ++i) { ringL[writeIdx % ringSize] = inL ? inL[i] : 0.f; ringR[writeIdx % ringSize] = inR ? inR[i] : (inL ? inL[i] : 0.f); ++writeIdx; }   // always recording, so Capture works from any source
+        headA.store((unsigned long long) writeIdx, std::memory_order_release);
         if (src == Source::Live && live) {
             for (int i = 0; i < n; ++i) { outL[i] = inL ? inL[i] : 0.f; outR[i] = inR ? inR[i] : (inL ? inL[i] : 0.f); }
             pos = (double) writeIdx; return;
@@ -173,8 +192,13 @@ public:
             if (move == Move::Stutter && bl > 0 && ++stutCnt >= (int)(bl * moveBeats / srcRatio / std::max(0.1, t))) { stutCnt = 0; pos = cuePoint; }
             if (move == Move::Transform && bl > 0) { const double ph = std::fmod((pos - trk->firstBeat * trk->sr) / (bl * 0.25), 2.0); const float g = ph < 1.0 ? 1.f : 0.f; gateG += (g - gateG) * 0.01f; l *= gateG; r *= gateG; }
             if (src == Source::File) {
-                if (pos >= (double) trk->frames() - 1) { pos = (double) trk->frames() - 1; playing = false; vel = 0; }
-                if (pos < 0) { pos = 0; if (vel < 0) vel = 0; }
+                const double nf = (double) trk->frames();
+                if (loopTrackOn) {      // captured loops and files repeat, like the mockup
+                    if (pos >= nf - 1) pos -= nf - 1; else if (pos < 0) pos += nf - 1;
+                } else {
+                    if (pos >= nf - 1) { pos = nf - 1; playing = false; vel = 0; }
+                    if (pos < 0) { pos = 0; if (vel < 0) vel = 0; }
+                }
             } else {
                 if (pos > (double) writeIdx - 2) pos = (double) writeIdx - 2;
                 const double oldest = (double) writeIdx - (double) ringSize + 4.0; if (pos < oldest) pos = oldest;
@@ -226,6 +250,8 @@ private:
     std::shared_ptr<const Track> trk;
     Source src = Source::File; bool live = false;
     std::vector<float> ringL, ringR; size_t ringSize = 0; unsigned long long writeIdx = 0;
+    std::atomic<unsigned long long> headA { 0 };
+    bool loopTrackOn = true;
     double pos = 0, vel = 0;
     bool playing = false, cueHeld = false, keylock = false, quant = true, sync = false;
     float pitch = 0.f, pitchRange = 0.08f, bend = 0.f, vinylTc = 0.06f;

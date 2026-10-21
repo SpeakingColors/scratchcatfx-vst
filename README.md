@@ -4,6 +4,10 @@
 
 Scratch effect plugin (VST3 and standalone): scratch, brake and backspin the sound coming from your DAW, with EQ, colour and a 3 slot FX chain.
 
+<p align="center"><img src="docs/screenshot.png" alt="Scratch Cat FX editor" width="900"><br><sub>Screenshot of the interactive mockup in docs/mockups.</sub></p>
+
+**Manual:** [PDF, opens in the browser](https://github.com/SpeakingColors/scratchcatfx-vst/blob/main/docs/scratchcatfx-vst-manual.pdf)
+
 ## Status
 Early. What exists today:
 - A tested pure C++ engine (`src/core`): the DAW input is recorded, the idle sound passes straight through (bit exact at neutral settings), and the scratch deck plays it back with vinyl style speed, brake, backspin and the moves. Core is shared with [Scratch Cat Duo](https://github.com/SpeakingColors/scratchcatduo-vst).

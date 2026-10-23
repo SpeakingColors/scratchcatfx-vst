@@ -31,4 +31,11 @@ for title, lines in sections:
         elif not l.strip(): flush_para(); flush_items()
         else: flush_items(); para.append(l.strip())
     flush_para(); flush_items()
+import os
+sys.path.insert(0, os.path.dirname(os.path.abspath(__file__)))
+try:
+    from tour_generic import tour_story
+    story += tour_story(os.path.join(os.path.dirname(os.path.abspath(txt)), 'tour'), h2, body, esc)
+except ImportError:
+    pass
 SimpleDocTemplate(out, pagesize=A4, leftMargin=18*mm, rightMargin=18*mm, topMargin=16*mm, bottomMargin=16*mm, title='Scratch Cat FX manual').build(story)

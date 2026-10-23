@@ -8,10 +8,11 @@ Scratch effect plugin.
 
 ## Next
 - [ ] Check the CI build artefacts load in a host and listen: scratch feel, brake and backspin times
-- [ ] cat-ui editor from the mockup (wood cheeks, platter, scope with dB scale, info bubbles) drawn through `catui::RenderGate`
+- [x] cat-ui editor from the mockup (0.2.0), drawn through `catui::RenderGate` with the PurrOne wood
 - [ ] Presets and state backup folders
 - [ ] MIDI mapping (jog, touch, buttons)
-- [ ] Manual
+- [x] Manual (PDF, built by the release workflow)
+- [ ] Manual with screenshots from the real editor
 
 ## Every cat plugin
 - Draw through `catui::RenderGate` so meters and animations stop when the window is not in front (audio, automation and MIDI keep running)

@@ -106,7 +106,11 @@ struct ChannelStrip {
         }
     }
     float tick(int ch, float x) {
-        x = lo[ch].tick(x); x = mid[ch].tick(x); x = hi[ch].tick(x);
+        // A band at exactly 0 dB is passed through untouched (the filter still runs so its state stays current when the knob moves).
+        // With fused multiply-add builds the 0 dB filter left about -94 dBFS of rounding residue, which broke the neutral pass through test.
+        { const float y = lo[ch].tick(x);  if (lastLo  != 0.f) x = y; }
+        { const float y = mid[ch].tick(x); if (lastMid != 0.f) x = y; }
+        { const float y = hi[ch].tick(x);  if (lastHi  != 0.f) x = y; }
         if (colMode != 0) { cf[ch].tick(x); x = colMode < 0 ? cf[ch].lp : cf[ch].hp; }
         return x;
     }

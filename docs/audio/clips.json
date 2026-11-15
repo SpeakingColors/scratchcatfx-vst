@@ -1,0 +1,65 @@
+[
+  {
+    "before": "scratchcatfx-vst-before-drums.mp3",
+    "after": "scratchcatfx-vst-after-drums-tape-stop-brake.mp3",
+    "preset": "Tape Stop Brake",
+    "source": "Drum loop",
+    "description": "Drum loop through the real Scratch Cat FX C++ engine. The deck is grabbed at 2.0 s, released, and braked 0.25 s later like a turntable stop; the sound goes live again at 4.6 s. No level change is applied: the plugin passes the sound bit exact until the deck is grabbed (checked: identical to the Before clip up to the grab and again after going live)."
+  },
+  {
+    "before": "scratchcatfx-vst-before-chords.mp3",
+    "after": "scratchcatfx-vst-after-chords-tape-stop-brake.mp3",
+    "preset": "Tape Stop Brake",
+    "source": "Synth chord loop",
+    "description": "Synth chord loop through the real Scratch Cat FX C++ engine. The deck is grabbed at 2.0 s, released, and braked 0.25 s later like a turntable stop; the sound goes live again at 4.6 s. No level change is applied: the plugin passes the sound bit exact until the deck is grabbed (checked: identical to the Before clip up to the grab and again after going live)."
+  },
+  {
+    "before": "scratchcatfx-vst-before-mix.mp3",
+    "after": "scratchcatfx-vst-after-mix-tape-stop-brake.mp3",
+    "preset": "Tape Stop Brake",
+    "source": "Full mix loop",
+    "description": "Full mix loop through the real Scratch Cat FX C++ engine. The deck is grabbed at 2.0 s, released, and braked 0.25 s later like a turntable stop; the sound goes live again at 4.6 s. No level change is applied: the plugin passes the sound bit exact until the deck is grabbed (checked: identical to the Before clip up to the grab and again after going live)."
+  },
+  {
+    "before": "scratchcatfx-vst-before-drums.mp3",
+    "after": "scratchcatfx-vst-after-drums-backspin.mp3",
+    "preset": "Backspin",
+    "source": "Drum loop",
+    "description": "Drum loop through the real Scratch Cat FX C++ engine. The deck is grabbed at 2.0 s and a backspin is triggered; the sound goes live again at 3.9 s. No level change is applied: the plugin passes the sound bit exact until the deck is grabbed (checked: identical to the Before clip up to the grab and again after going live)."
+  },
+  {
+    "before": "scratchcatfx-vst-before-chords.mp3",
+    "after": "scratchcatfx-vst-after-chords-backspin.mp3",
+    "preset": "Backspin",
+    "source": "Synth chord loop",
+    "description": "Synth chord loop through the real Scratch Cat FX C++ engine. The deck is grabbed at 2.0 s and a backspin is triggered; the sound goes live again at 3.9 s. No level change is applied: the plugin passes the sound bit exact until the deck is grabbed (checked: identical to the Before clip up to the grab and again after going live)."
+  },
+  {
+    "before": "scratchcatfx-vst-before-mix.mp3",
+    "after": "scratchcatfx-vst-after-mix-backspin.mp3",
+    "preset": "Backspin",
+    "source": "Full mix loop",
+    "description": "Full mix loop through the real Scratch Cat FX C++ engine. The deck is grabbed at 2.0 s and a backspin is triggered; the sound goes live again at 3.9 s. No level change is applied: the plugin passes the sound bit exact until the deck is grabbed (checked: identical to the Before clip up to the grab and again after going live)."
+  },
+  {
+    "before": "scratchcatfx-vst-before-drums.mp3",
+    "after": "scratchcatfx-vst-after-drums-baby-scratch-with-echo.mp3",
+    "preset": "Baby Scratch with Echo",
+    "source": "Drum loop",
+    "description": "Drum loop through the real Scratch Cat FX C++ engine. Hand on the platter from 2.0 s to 4.0 s, forward and back every quarter second, echo on the deck; live again at 4.6 s. The echo is on for the whole clip, so the sound is not bit exact even before the scratch. No level change is applied."
+  },
+  {
+    "before": "scratchcatfx-vst-before-chords.mp3",
+    "after": "scratchcatfx-vst-after-chords-baby-scratch-with-echo.mp3",
+    "preset": "Baby Scratch with Echo",
+    "source": "Synth chord loop",
+    "description": "Synth chord loop through the real Scratch Cat FX C++ engine. Hand on the platter from 2.0 s to 4.0 s, forward and back every quarter second, echo on the deck; live again at 4.6 s. The echo is on for the whole clip, so the sound is not bit exact even before the scratch. No level change is applied."
+  },
+  {
+    "before": "scratchcatfx-vst-before-mix.mp3",
+    "after": "scratchcatfx-vst-after-mix-baby-scratch-with-echo.mp3",
+    "preset": "Baby Scratch with Echo",
+    "source": "Full mix loop",
+    "description": "Full mix loop through the real Scratch Cat FX C++ engine. Hand on the platter from 2.0 s to 4.0 s, forward and back every quarter second, echo on the deck; live again at 4.6 s. The echo is on for the whole clip, so the sound is not bit exact even before the scratch. No level change is applied."
+  }
+]

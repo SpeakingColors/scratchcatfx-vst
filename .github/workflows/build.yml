@@ -32,7 +32,7 @@ jobs:
       - name: Validate the VST3 (pluginval, strictness 5)
         run: |
           sudo apt-get install -y xvfb
-          curl -sL -o pv.zip https://github.com/Tracktion/pluginval/releases/latest/download/pluginval_Linux.zip && unzip -q pv.zip
+          curl -sL -o pv.zip https://github.com/Tracktion/pluginval/releases/download/v1.0.4/pluginval_Linux.zip && unzip -q pv.zip
           VST=$(find build -name "*.vst3" -maxdepth 4 | head -1)
           xvfb-run -a ./pluginval --strict-level 5 --validate-in-process --skip-gui-tests "$VST" 2>&1 | tee -a ci.log; exit ${PIPESTATUS[0]}
       - uses: actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02 # v4

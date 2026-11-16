@@ -647,8 +647,8 @@ struct ScratchFxEditor::Impl : public juce::Component
     {
         juce::AlertWindow::showAsync(juce::MessageBoxOptions().withIconType(juce::MessageBoxIconType::InfoIcon).withTitle("Scratch Cat FX")
             .withMessage("Scratch Cat FX by Studio 87.\nFree and open source (AGPL-3.0-or-later).\nIt collects no data and never touches the network.\nhttps://github.com/SpeakingColors/scratchcatfx-vst\n\nIf it helps your music, you can support the next plugins on Ko-fi.\n\n" + juce::String(studio87link::aboutLine()))
-            .withButton("Support on Ko-fi").withButton(studio87link::buttonText()).withButton("Close"),
-            [](int r) { if (r == 1) juce::URL("https://ko-fi.com/studio87").launchInDefaultBrowser(); else if (r == 2) studio87link::openUpdater("scratchcatfx-vst"); });
+            .withButton("Support on Ko-fi").withButton(studio87link::buttonText()).withButton(studio87link::githubButtonText()).withButton("Close"),
+            [](int r) { if (r == 1) juce::URL("https://ko-fi.com/studio87").launchInDefaultBrowser(); else if (r == 2) studio87link::openUpdater("scratchcatfx-vst"); else if (r == 3) studio87link::openGitHub("scratchcatfx-vst"); });
     }
 
     // ---- per frame ----
